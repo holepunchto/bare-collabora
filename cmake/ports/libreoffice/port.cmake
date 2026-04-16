@@ -29,10 +29,6 @@ declare_port(
   ARGS ${args}
 )
 
-if(APPLE)
-  set(library_base instdir/LibreOffice.app/Contents/Frameworks)
-endif()
-
 add_library(libreoffice INTERFACE)
 
 add_dependencies(libreoffice ${libreoffice})
@@ -43,6 +39,8 @@ target_include_directories(
 )
 
 if(APPLE)
+  set(library_base instdir/LibreOffice.app/Contents/Frameworks)
+
   set(libraries
     libassuan.9.dylib
     libavmedialo.dylib
