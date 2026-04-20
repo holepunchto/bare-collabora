@@ -146,7 +146,7 @@ if(APPLE)
     VERBATIM
   )
 
-  add_custom_target(libreoffice_install_names DEPENDS "${stamp}")
+  add_custom_target(libreoffice_install_names DEPENDS "${stamp}" ${byproducts})
 
   add_dependencies(libreoffice libreoffice_install_names)
 endif()
