@@ -28,6 +28,8 @@ declare_port(
   libreoffice
   AUTOTOOLS
   ARGS ${args}
+  PATCHES
+    patches/001-uno-ini-env-override.patch
 )
 
 add_library(libreoffice INTERFACE)

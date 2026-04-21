@@ -1,0 +1,29 @@
+diff --git a/cppuhelper/source/paths.cxx b/cppuhelper/source/paths.cxx
+index 0a4ccf76e6ef..a9d3bb5bf4aa 100644
+--- a/cppuhelper/source/paths.cxx
++++ b/cppuhelper/source/paths.cxx
+@@ -26,6 +26,7 @@
+ #include <com/sun/star/uno/DeploymentException.hpp>
+ #include <osl/file.hxx>
+ #include <osl/module.hxx>
++#include <rtl/bootstrap.hxx>
+ #include <rtl/ustring.hxx>
+ #include <sal/types.h>
+ #include <o3tl/string_view.hxx>
+@@ -52,6 +53,16 @@ OUString get_this_libpath() {
+ }
+ 
+ OUString cppu::getUnoIniUri() {
++    // Honor an explicit override so that embedders (e.g. LibreOfficeKit
++    // consumers) can relocate unorc/uno.ini without having to place a file
++    // at the hardcoded install-relative path. The value is a file:// URL
++    // pointing at the rc file itself.
++    OUString env;
++    if (rtl::Bootstrap::get(u"URE_UNO_INI_URI"_ustr, env) && !env.isEmpty())
++    {
++        return env;
++    }
++
+ #if defined ANDROID
+     // Wouldn't it be lovely to avoid this ugly hard-coding.
+     // The problem is that the 'create_bootstrap_macro_expander_factory()'
