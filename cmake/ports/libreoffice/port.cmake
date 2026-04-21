@@ -1,16 +1,96 @@
 include_guard(GLOBAL)
 
 set(args
-  --enable-release-build
+  --enable-bogus-pkg-config
+  --enable-cairo-rgba
+  --enable-gui
   --enable-hardening-flags
   --enable-headless
+  --enable-lok-always-active
+  --enable-macosx-sandbox
+  --enable-mergelibs
+  --enable-mpl-subset
+  --enable-release-build
 
+  --with-buildconfig-recorded
+  --with-fonts
+  --with-galleries=no
+  --with-lang=en-US
+  --with-linker-hash-style=both
+  --with-system-zlib
+  --with-theme=colibre
+  --with-vendor=Collabora
+
+  --disable-avahi
+  --disable-avmedia
+  --disable-coinmp
+  --disable-community-flavor
+  --disable-compiler-plugins
+  --disable-cups
+  --disable-database-connectivity
+  --disable-dbus
+  --disable-dconf
+  --disable-epm
+  --disable-evolution2
+  --disable-ext-nlpsolver
+  --disable-ext-wiki-publisher
   --disable-extensions
+  --disable-firebird-sdbc
+  --disable-gio
+  --disable-gstreamer-1-0
+  --disable-gtk3
+  --disable-kf5
+  --disable-ldap
+  --disable-libcmis
+  --disable-librelogo
+  --disable-lotuswordpro
+  --disable-lpsolve
   --disable-odk
+  --disable-online-update
+  --disable-opencl
+  --disable-openssl
+  --disable-poppler
+  --disable-postgresql-sdbc
   --disable-python
+  --disable-qt5
+  --disable-randr
+  --disable-report-builder
+  --disable-sal-log
+  --disable-scripting
+  --disable-scripting-beanshell
+  --disable-scripting-javascript
+  --disable-sdremote
+  --disable-sdremote-bluetooth
+  --disable-skia
+  --disable-symbols
+  --disable-xmlhelp
+  --disable-zxing
 
-  --without-lang
+  --without-export-validation
+  --without-help
+  --without-helppack-integration
   --without-java
+  --without-junit
+  --without-myspell-dicts
+  --without-package-format
+  --without-system-cairo
+  --without-system-curl
+  --without-system-dicts
+  --without-system-expat
+  --without-system-fontconfig
+  --without-system-freetype
+  --without-system-graphite
+  --without-system-harfbuzz
+  --without-system-icu
+  --without-system-jars
+  --without-system-jpeg
+  --without-system-libpng
+  --without-system-libxml
+  --without-system-nss
+  --without-system-openssl
+  --without-system-postgresql
+  --without-templates
+  --without-webdav
 )
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -20,11 +100,11 @@ elseif(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
 endif()
 
 if(APPLE)
-  list(APPEND args MAKE=gmake --enable-bogus-pkg-config)
+  list(APPEND args MAKE=gmake)
 endif()
 
 declare_port(
-  "github:LibreOffice/core#libreoffice-26.2.3.1"
+  "github:LibreOffice/core#distro/collabora/co-25.04"
   libreoffice
   AUTOTOOLS
   ARGS ${args}
@@ -42,127 +122,77 @@ target_include_directories(
 )
 
 if(APPLE)
-  set(library_base instdir/LibreOffice.app/Contents/Frameworks)
+  set(library_base instdir/CollaboraOffice.app/Contents/Frameworks)
 
   set(libraries
-    libassuan.9.dylib
-    libavmedialo.dylib
-    libbasegfxlo.dylib
-    libcairo-lo.2.dylib
-    libcanvastoolslo.dylib
-    libchart2apilo.dylib
-    libclewlo.dylib
-    libcomphelper.dylib
-    libconfigmgrlo.dylib
-    libcppcanvaslo.dylib
+    libcairo.2.dylib
     libcurl.4.dylib
-    libdbtoolslo.dylib
-    libdeploymentmisclo.dylib
-    libdocmodello.dylib
-    libdrawinglayercorelo.dylib
-    libdrawinglayerlo.dylib
-    libeditenglo.dylib
     libepoxy.dylib
-    libfwklo.dylib
+    libexslt.0.dylib
+    libfontconfig.1.dylib
     libgcc3_uno.dylib
-    libgpg-error.0.dylib
-    libgpgme.11.dylib
-    libgpgmepp.6.dylib
     libi18nlangtag.dylib
-    libi18npoollo.dylib
-    libi18nutil.dylib
-    libicudata.dylib.78
-    libicui18n.dylib.78
-    libicuuc.dylib.78
+    libicudata.dylib.75
+    libicui18n.dylib.75
+    libicuuc.dylib.75
     liblangtag.1.dylib
     liblcms2.2.dylib
-    liblnglo.dylib
-    liblocalebe1lo.dylib
     liblocaledata_en.dylib
     libmacbe1lo.dylib
+    libmergedlo.dylib
     libnspr4.dylib
     libnss3.dylib
     libnssutil3.dylib
-    libopencllo.dylib
     libpdfiumlo.dylib
     libpixman-1.0.dylib
     libplc4.dylib
     libplds4.dylib
+    libraptor2-lo.0.dylib
+    librasqal-lo.3.dylib
+    librdf-lo.0.dylib
     libreglo.dylib
-    libsaxlo.dylib
-    libsblo.dylib
-    libsfxlo.dylib
-    libskialo.dylib
     libsmime3.dylib
-    libsofficeapp.dylib
-    libsotlo.dylib
-    libstocserviceslo.dylib
     libstorelo.dylib
-    libsvllo.dylib
-    libsvtlo.dylib
-    libsvxcorelo.dylib
-    libsvxlo.dylib
-    libtklo.dylib
-    libtllo.dylib
-    libucb1.dylib
-    libucbhelper.dylib
     libuno_cppu.dylib.3
     libuno_cppuhelpergcc3.dylib.3
     libuno_sal.dylib.3
     libuno_salhelpergcc3.dylib.3
     libunoidllo.dylib
-    libutllo.dylib
-    libvcllo.dylib
+    libxml2.16.dylib
     libxmlreaderlo.dylib
-    libxmlscriptlo.dylib
-    libxolo.dylib
+    libxslt.1.dylib
   )
 endif()
 
-if(APPLE)
-  set(stamp "${libreoffice_STAMP_DIR}/${libreoffice}-install-names")
+set(stamp "${libreoffice_STAMP_DIR}/${libreoffice}-relink")
 
-  set(byproducts)
-  set(commands)
+set(byproducts)
 
-  foreach(library IN LISTS libraries)
-    set(path "${libreoffice_BINARY_DIR}/${library_base}/${library}")
+foreach(library IN LISTS libraries)
+  list(APPEND byproducts "${libreoffice_BINARY_DIR}/${library_base}/${library}")
+endforeach()
 
-    set(args install_name_tool -id "@rpath/${library}")
+set(relink "${CMAKE_CURRENT_LIST_DIR}/relink.js")
 
-    foreach(other IN LISTS libraries)
-      list(APPEND args -change "@rpath/${other}" "@loader_path/${other}")
-    endforeach()
+add_custom_command(
+  OUTPUT "${stamp}"
+  DEPENDS ${relink} ${libreoffice}
+  BYPRODUCTS ${byproducts}
+  COMMAND node ${relink} ${byproducts}
+  COMMAND "${CMAKE_COMMAND}" -E touch "${stamp}"
+  VERBATIM
+)
 
-    list(APPEND byproducts "${path}")
-    list(APPEND args "${path}")
-    list(APPEND commands COMMAND ${args})
-  endforeach()
+add_custom_target(libreoffice_relink DEPENDS "${stamp}" ${byproducts})
 
-  add_custom_command(
-    OUTPUT "${stamp}"
-    DEPENDS ${libreoffice}
-    BYPRODUCTS ${byproducts}
-    ${commands}
-    COMMAND "${CMAKE_COMMAND}" -E touch "${stamp}"
-    VERBATIM
-  )
-
-  add_custom_target(libreoffice_install_names DEPENDS "${stamp}" ${byproducts})
-
-  add_dependencies(libreoffice libreoffice_install_names)
-endif()
+add_dependencies(libreoffice libreoffice_relink)
 
 foreach(library IN LISTS libraries)
   string(REGEX REPLACE "^lib|\\..*$" "" target "${library}")
 
   add_library(${target} SHARED IMPORTED GLOBAL)
 
-  add_dependencies(${target} ${libreoffice})
-
-  if(APPLE)
-    add_dependencies(${target} libreoffice_install_names)
-  endif()
+  add_dependencies(${target} ${libreoffice} libreoffice_relink)
 
   set_target_properties(
     ${target}

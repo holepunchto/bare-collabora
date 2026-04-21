@@ -31,6 +31,7 @@
   },
   "homepage": "https://github.com/holepunchto/bare-collabora#readme",
   "devDependencies": {
+    "bare-lief": "^0.2.3",
     "brittle": "^3.1.1",
     "cmake-bare": "^1.1.6",
     "cmake-fetch": "^1.5.1",
