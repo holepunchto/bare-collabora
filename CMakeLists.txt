@@ -40,21 +40,26 @@ install(
   DESTINATION "${CMAKE_SOURCE_DIR}/assets/${target}"
   FILES_MATCHING
     # Configuration
+    PATTERN "bootstraprc"
     PATTERN "fundamentalrc"
     PATTERN "lounorc"
-    PATTERN "bootstraprc"
 
     # Directories
-    REGEX "/ure/"
-    REGEX "/types/"
-    REGEX "/services/"
+    REGEX "/filter/"
+    REGEX "/gallery/"
+    REGEX "/liblangtag/"
+    REGEX "/palette/"
     REGEX "/presets/"
+    REGEX "/registry/"
+    REGEX "/services/"
+    REGEX "/types/"
+    REGEX "/ure/"
 
     # Fonts
-    PATTERN "EmojiOne*.ttf"
-    PATTERN "Liberation*.ttf"
     PATTERN "Caladea-*.ttf"
     PATTERN "Carlito-*.ttf"
+    PATTERN "EmojiOne*.ttf"
     PATTERN "Gen*.ttf"
+    PATTERN "Liberation*.ttf"
     PATTERN "opens___.ttf"
 )
