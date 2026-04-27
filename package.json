@@ -19,7 +19,6 @@
     "binding.cc",
     "binding.js",
     "CMakeLists.txt",
-    "assets",
     "lib",
     "prebuilds"
   ],
