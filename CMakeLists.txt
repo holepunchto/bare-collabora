@@ -37,7 +37,7 @@ install(
 
 install(
   DIRECTORY "${assets}"
-  DESTINATION "${CMAKE_SOURCE_DIR}/assets/${target}"
+  DESTINATION ${target}/${name}/assets
   FILES_MATCHING
     # Configuration
     PATTERN "bootstraprc"

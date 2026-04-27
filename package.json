@@ -9,8 +9,8 @@
   "imports": {
     "#assets": {
       "darwin": {
-        "arm64": "./assets/darwin-arm64",
-        "x64": "./assets/darwin-x64"
+        "arm64": "./prebuilds/darwin-arm64/bare-collabora/assets",
+        "x64": "./prebuilds/darwin-x64/bare-collabora/assets"
       }
     }
   },
