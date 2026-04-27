@@ -6,6 +6,14 @@
     "./package": "./package.json",
     ".": "./index.js"
   },
+  "imports": {
+    "#assets": {
+      "darwin": {
+        "arm64": "./assets/darwin-arm64",
+        "x64": "./assets/darwin-x64"
+      }
+    }
+  },
   "files": [
     "index.js",
     "binding.cc",
@@ -31,6 +39,11 @@
     "url": "https://github.com/holepunchto/bare-collabora/issues"
   },
   "homepage": "https://github.com/holepunchto/bare-collabora#readme",
+  "dependencies": {
+    "bare-env": "^3.0.0",
+    "bare-path": "^3.0.0",
+    "bare-url": "^2.4.1"
+  },
   "devDependencies": {
     "bare-lief": "^0.2.3",
     "brittle": "^3.1.1",
