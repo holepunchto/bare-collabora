@@ -1,1 +1,1 @@
-const binding = require('./binding')
+exports.Document = require('./lib/document')

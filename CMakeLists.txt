@@ -6,6 +6,8 @@ find_package(cmake-ports REQUIRED PATHS node_modules/cmake-ports)
 
 project(bare_collabora C CXX)
 
+fetch_package("github:holepunchto/libjstl#6b78e1e")
+
 find_port(libreoffice)
 
 add_bare_module(bare_collabora)
@@ -18,6 +20,8 @@ target_sources(
 
 target_link_libraries(
   ${bare_collabora}
+  PRIVATE
+    jstl
   PUBLIC
     libreoffice
 )
