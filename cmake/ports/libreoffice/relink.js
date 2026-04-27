@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const { execFileSync } = require('child_process')
 const { MachO } = require('bare-lief')
 
 const libraries = process.argv.slice(2)
@@ -19,5 +20,7 @@ for (const library of libraries) {
     }
 
     fat.toDisk(library)
+
+    execFileSync('codesign', ['--sign', '-', '--force', library], { stdio: 'ignore' })
   }
 }

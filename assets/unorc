@@ -1,4 +1,0 @@
-[Bootstrap]
-URE_INTERNAL_LIB_DIR=${ORIGIN}
-UNO_TYPES=${ORIGIN}/uno/types.rdb ${UNO_MORE_TYPES}
-UNO_SERVICES=${ORIGIN}/uno/services.rdb ${UNO_MORE_SERVICES}

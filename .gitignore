@@ -3,5 +3,6 @@ sandbox.js
 sandbox
 coverage
 build
+assets
 prebuilds
 package-lock.json

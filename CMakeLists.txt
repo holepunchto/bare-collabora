@@ -22,7 +22,9 @@ target_link_libraries(
     libreoffice
 )
 
-get_target_property(libraries libreoffice INTERFACE_LINK_LIBRARIES)
+get_target_property(libraries libreoffice COLLABORA_RUNTIME_DEPENDENCIES)
+
+get_target_property(assets libreoffice COLLABORA_ASSETS_DIR)
 
 bare_target(target)
 
@@ -31,4 +33,28 @@ bare_module_target("." module NAME name)
 install(
   IMPORTED_RUNTIME_ARTIFACTS ${libraries}
   DESTINATION ${target}/${name}
+)
+
+install(
+  DIRECTORY "${assets}"
+  DESTINATION "${CMAKE_SOURCE_DIR}/assets/${target}"
+  FILES_MATCHING
+    # Configuration
+    PATTERN "fundamentalrc"
+    PATTERN "lounorc"
+    PATTERN "bootstraprc"
+
+    # Directories
+    REGEX "/ure/"
+    REGEX "/types/"
+    REGEX "/services/"
+    REGEX "/presets/"
+
+    # Fonts
+    PATTERN "EmojiOne*.ttf"
+    PATTERN "Liberation*.ttf"
+    PATTERN "Caladea-*.ttf"
+    PATTERN "Carlito-*.ttf"
+    PATTERN "Gen*.ttf"
+    PATTERN "opens___.ttf"
 )
