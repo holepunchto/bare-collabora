@@ -1,0 +1,22 @@
+diff --git a/Makefile.in b/Makefile.in
+index cb80cb8e0b0d..b64601911cb1 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -366,7 +366,7 @@ echo "To debug: gdb $(2)/$(PRODUCTNAME).app/Contents/MacOS/soffice"
+ endef
+ endif
+ 
+-ifneq ($(OS),MACOSX)
++ifeq ($(filter MACOSX iOS,$(OS)),)
+ install:
+ 	@$(call gb_Top_DoInstall,Installing,)
+ 	@$(call gb_Top_InstallFinished,Installation,$(INSTALLDIR))
+@@ -374,7 +374,7 @@ install:
+ install-strip:
+ 	@$(call gb_Top_DoInstall,Installing and stripping binaries,--strip)
+ 	@$(call gb_Top_InstallFinished,Installation,$(INSTALLDIR))
+-endif # !MACOSX
++endif # !MACOSX && !iOS
+ 
+ test-install: build
+ 	@rm -rf $(TESTINSTALLDIR)
