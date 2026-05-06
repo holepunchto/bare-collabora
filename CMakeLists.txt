@@ -59,6 +59,9 @@ install(
     REGEX "/types/"
     REGEX "/ure/"
 
+    # UI
+    PATTERN "*.ui"
+
     # Fonts
     PATTERN "Caladea-*.ttf"
     PATTERN "Carlito-*.ttf"
