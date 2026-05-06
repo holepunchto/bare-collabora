@@ -15,7 +15,7 @@ using namespace lok;
 extern "C" LibreOfficeKit *
 libreofficekit_hook(const char *install_path);
 
-static Office bare_collabora__kit = nullptr;
+static std::unique_ptr<Office> bare_collabora__kit = nullptr;
 
 static uv_mutex_t bare_collabora__lock;
 
@@ -25,7 +25,7 @@ static void
 bare_collabora__on_init(void) {
   int err;
 
-  bare_collabora__kit = libreofficekit_hook(nullptr);
+  bare_collabora__kit = std::make_unique<Office>(libreofficekit_hook(nullptr));
 
   err = uv_mutex_init(&bare_collabora__lock);
   assert(err == 0);
@@ -39,7 +39,7 @@ bare_collabora_document_open(
 ) {
   uv_mutex_lock(&bare_collabora__lock);
 
-  auto document = bare_collabora__kit.documentLoad(url.c_str());
+  auto document = bare_collabora__kit->documentLoad(url.c_str());
 
   uv_mutex_unlock(&bare_collabora__lock);
 
