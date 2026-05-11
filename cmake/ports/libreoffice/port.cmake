@@ -199,6 +199,8 @@ declare_port(
     patches/002-configure-out-of-tree.patch
     patches/003-forward-cross-compiling-state.patch
     patches/004-skip-install-on-ios.patch
+    patches/005-allow-ios-simulator-on-arm64.patch
+    patches/006-curl-ios-disable-pipe2.patch
 )
 
 add_library(libreoffice INTERFACE)
@@ -559,7 +561,7 @@ set(stamp "${libreoffice_STAMP_DIR}/${libreoffice}-relink")
 
 set(byproducts)
 
-foreach(library IN LISTS shared modules)
+foreach(library IN LISTS static shared modules)
   list(APPEND byproducts "${libraries}/${library}")
 endforeach()
 
