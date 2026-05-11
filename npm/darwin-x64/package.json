@@ -1,0 +1,27 @@
+{
+  "name": "bare-collabora-darwin-x64",
+  "version": "0.1.0",
+  "description": "The macOS Intel 64-bit prebuilds for Collabora",
+  "exports": {
+    "./package": "./package.json",
+    ".": "./index.js"
+  },
+  "imports": {
+    "#assets": "./prebuilds/darwin-x64/bare-collabora-darwin-x64/assets"
+  },
+  "files": [
+    "NOTICE",
+    "index.js",
+    "prebuilds"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holepunchto/bare-collabora.git"
+  },
+  "author": "Holepunch",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/holepunchto/bare-collabora/issues"
+  },
+  "homepage": "https://github.com/holepunchto/bare-collabora"
+}

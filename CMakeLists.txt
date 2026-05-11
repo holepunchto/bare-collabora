@@ -10,7 +10,11 @@ fetch_package("github:holepunchto/libjstl#6b78e1e")
 
 find_port(libreoffice)
 
-add_bare_module(bare_collabora)
+bare_target(target)
+
+set(name bare-collabora-${target})
+
+add_bare_module(bare_collabora NAME ${name})
 
 target_sources(
   ${bare_collabora}
@@ -29,10 +33,6 @@ target_link_libraries(
 get_target_property(libraries libreoffice COLLABORA_RUNTIME_DEPENDENCIES)
 
 get_target_property(assets libreoffice COLLABORA_ASSETS_DIR)
-
-bare_target(target)
-
-bare_module_target("." module NAME name)
 
 install(
   IMPORTED_RUNTIME_ARTIFACTS ${libraries}

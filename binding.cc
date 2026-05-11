@@ -27,11 +27,13 @@ struct bare_collabora_document_t {
 
   bare_collabora_document_t(bare_collabora_document_t &&) = delete;
 
-  bare_collabora_document_t &operator=(bare_collabora_document_t &&) = delete;
+  bare_collabora_document_t &
+  operator=(bare_collabora_document_t &&) = delete;
 
   bare_collabora_document_t(const bare_collabora_document_t &) = delete;
 
-  bare_collabora_document_t &operator=(const bare_collabora_document_t &) = delete;
+  bare_collabora_document_t &
+  operator=(const bare_collabora_document_t &) = delete;
 
   ~bare_collabora_document_t() {
     delete handle;

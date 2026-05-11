@@ -1,0 +1,32 @@
+{
+  "name": "bare-collabora-darwin-arm64",
+  "version": "0.1.0",
+  "description": "The macOS ARM 64-bit prebuilds for Collabora",
+  "exports": {
+    "./package": "./package.json",
+    ".": "./index.js"
+  },
+  "imports": {
+    "#assets": "./prebuilds/darwin-arm64/bare-collabora-darwin-arm64/assets"
+  },
+  "files": [
+    "NOTICE",
+    "index.js",
+    "prebuilds"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holepunchto/bare-collabora.git"
+  },
+  "author": "Holepunch",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/holepunchto/bare-collabora/issues"
+  },
+  "homepage": "https://github.com/holepunchto/bare-collabora",
+  "dependencies": {
+    "bare-env": "^3.0.0",
+    "bare-path": "^3.0.0",
+    "bare-url": "^2.4.1"
+  }
+}

@@ -10,10 +10,10 @@
     }
   },
   "imports": {
-    "#assets": {
+    "#binding": {
       "darwin": {
-        "arm64": "./prebuilds/darwin-arm64/bare-collabora/assets",
-        "x64": "./prebuilds/darwin-x64/bare-collabora/assets"
+        "arm64": "bare-collabora-darwin-arm64",
+        "x64": "bare-collabora-darwin-x64"
       }
     }
   },
@@ -25,6 +25,9 @@
     "CMakeLists.txt",
     "lib",
     "prebuilds"
+  ],
+  "workspaces": [
+    "npm/*"
   ],
   "addon": true,
   "scripts": {
@@ -50,7 +53,7 @@
   "devDependencies": {
     "bare-lief": "^0.2.3",
     "brittle": "^3.1.1",
-    "cmake-bare": "^1.1.6",
+    "cmake-bare": "^1.8.0",
     "cmake-fetch": "^1.5.1",
     "cmake-ports": "^1.8.0",
     "lunte": "^1.6.0",
