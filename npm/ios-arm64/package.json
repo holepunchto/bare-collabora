@@ -1,0 +1,22 @@
+{
+  "name": "bare-collabora-ios-arm64",
+  "version": "0.1.0",
+  "description": "The iOS ARM 64-bit prebuilds for Collabora",
+  "exports": {
+    "./package": "./package.json"
+  },
+  "files": [
+    "NOTICE",
+    "prebuilds"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holepunchto/bare-collabora.git"
+  },
+  "author": "Holepunch",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/holepunchto/bare-collabora/issues"
+  },
+  "homepage": "https://github.com/holepunchto/bare-collabora"
+}
