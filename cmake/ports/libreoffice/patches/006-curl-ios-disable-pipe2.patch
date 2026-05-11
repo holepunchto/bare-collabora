@@ -1,0 +1,12 @@
+diff --git a/external/curl/ExternalProject_curl.mk b/external/curl/ExternalProject_curl.mk
+index 81eb9c8651e5..8abec5125a4a 100644
+--- a/external/curl/ExternalProject_curl.mk
++++ b/external/curl/ExternalProject_curl.mk
+@@ -65,6 +65,7 @@ $(call gb_ExternalProject_get_state_target,curl,build):
+ 			$(if $(filter MACOSX,$(OS)),--prefix=/@.__________________________________________________OOO) \
+ 			$(if $(filter MACOSX,$(OS)),CFLAGS='$(CFLAGS) \
+ 				-mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET)') \
++			$(if $(filter iOS,$(OS)),ac_cv_func_pipe2=no) \
+ 			$(if $(ENABLE_EMSCRIPTEN_PROXY_POSIX_SOCKETS),--disable-socketpair) \
+ 			$(if $(filter -fsanitize=undefined,$(CC)),CC='$(CC) -fno-sanitize=function') \
+ 			CPPFLAGS='$(curl_CPPFLAGS)' \
