@@ -1,0 +1,38 @@
+diff --git a/ios/CustomTarget_iOS_setup.mk b/ios/CustomTarget_iOS_setup.mk
+index f44a154470bb..0a34f90ae61e 100644
+--- a/ios/CustomTarget_iOS_setup.mk
++++ b/ios/CustomTarget_iOS_setup.mk
+@@ -130,6 +130,33 @@ $(IOSGEN)/native-code.h: $(BUILDDIR)/config_host.mk \
+ 	$(SRCDIR)/bin/lo-all-static-libs | sed -e 's/ /\
+ /g' >$(IOSGEN)/ios-all-static-libs.list
+ 
++	# Mirror every archive lo-all-static-libs enumerates into $(INSTDIR)/$(LIBO_LIB_FOLDER) so
++	# downstream consumers can link from a single location. First-wins on basename collisions
++	# preserves link-order semantics (e.g. icu stubdata supersedes the full data table on iOS).
++	for lib in `$(SRCDIR)/bin/lo-all-static-libs`; do \
++	    case "$$lib" in *.a) ;; *) continue ;; esac; \
++	    test -f "$$lib" || continue; \
++	    case "$$lib" in $(INSTDIR)/$(LIBO_LIB_FOLDER)/*) continue ;; esac; \
++	    dest=$(INSTDIR)/$(LIBO_LIB_FOLDER)/`basename "$$lib"`; \
++	    test -f "$$dest" || cp -f "$$lib" "$$dest"; \
++	done
++
++	# Some NSS subtrees produce loose .o files instead of .a archives. Bundle each such
++	# directory into a synthesized archive so the install set stays archive-only.
++	for spec in \
++	    "libnss_ckfw_builtins.a:$(WORKDIR)/UnpackedTarball/nss/nss/lib/ckfw/builtins/out" \
++	    "libnss_freebl.a:$(WORKDIR)/UnpackedTarball/nss/nss/lib/freebl/out/Darwin_SINGLE_SHLIB" \
++	    "libnss_freebl_deprecated.a:$(WORKDIR)/UnpackedTarball/nss/nss/lib/freebl/out/Darwin_SINGLE_SHLIB/deprecated" ; do \
++	    archive=$${spec%%:*}; dir=$${spec#*:}; \
++	    ls "$$dir"/*.o >/dev/null 2>&1 || continue; \
++	    rm -f "$(INSTDIR)/$(LIBO_LIB_FOLDER)/$$archive"; \
++	    (cd "$$dir" && ar rcs "$(INSTDIR)/$(LIBO_LIB_FOLDER)/$$archive" *.o); \
++	done
++
++	# Stage the ICU data file alongside the other program-level resources so it can be
++	# shipped as part of the install set.
++	cp $(WORKDIR)/UnpackedTarball/icu/source/data/in/icudt$(ICU_MAJOR)l.dat $(INSTDIR)/$(LIBO_LIB_FOLDER)/ICU.dat
++
+ #- clean ios  -----------------------------------------------------------------
+ $(call gb_CustomTarget_get_clean_target,ios/iOS_setup):
+ 	$(call gb_Output_announce,$(subst $(WORKDIR)/Clean/,,$@),$(false),ENV,2)
