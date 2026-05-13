@@ -27,3 +27,36 @@ index 0a4ccf76e6ef..a9d3bb5bf4aa 100644
  #if defined ANDROID
      // Wouldn't it be lovely to avoid this ugly hard-coding.
      // The problem is that the 'create_bootstrap_macro_expander_factory()'
+diff --git a/desktop/source/lib/init.cxx b/desktop/source/lib/init.cxx
+index d44fbb0a3750..e242da809a0d 100644
+--- a/desktop/source/lib/init.cxx
++++ b/desktop/source/lib/init.cxx
+@@ -7952,9 +7952,25 @@ static void aBasicErrorFunc(const OUString& rError, const OUString& rAction)
+ static bool initialize_uno(const OUString& aAppProgramURL)
+ {
+ #ifdef IOS
+-    // For iOS we already hardcode the inifile as "rc" in the .app directory.
+-    rtl::Bootstrap::setIniFilename(aAppProgramURL + "/" SAL_CONFIGFILE("fundamental"));
+-    xContext = cppu::defaultBootstrap_InitialComponentContext(aAppProgramURL + "/rc");
++    // For iOS we normally hardcode the inifile as "rc" in the .app directory,
++    // but honor explicit overrides so that embedders (e.g. LibreOfficeKit
++    // consumers) can relocate fundamentalrc/unorc outside the .app bundle.
++    OUString aBootstrapOverride;
++    if (!rtl::Bootstrap::get(u"URE_BOOTSTRAP"_ustr, aBootstrapOverride) || aBootstrapOverride.isEmpty())
++    {
++        rtl::Bootstrap::setIniFilename(aAppProgramURL + "/" SAL_CONFIGFILE("fundamental"));
++    }
++    OUString aUnoIniOverride;
++    if (rtl::Bootstrap::get(u"URE_UNO_INI_URI"_ustr, aUnoIniOverride) && !aUnoIniOverride.isEmpty())
++    {
++        // Fall through to the no-arg overload so that getUnoIniUri() (and
++        // thus the URE_UNO_INI_URI override) is honored.
++        xContext = cppu::defaultBootstrap_InitialComponentContext();
++    }
++    else
++    {
++        xContext = cppu::defaultBootstrap_InitialComponentContext(aAppProgramURL + "/rc");
++    }
+ #elif defined MACOSX
+     rtl::Bootstrap::setIniFilename(aAppProgramURL + "/../Resources/" SAL_CONFIGFILE("soffice"));
+     xContext = cppu::defaultBootstrap_InitialComponentContext();

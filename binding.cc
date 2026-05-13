@@ -9,6 +9,12 @@
 
 #include <LibreOfficeKit/LibreOfficeKit.hxx>
 
+#if defined(BARE_TARGET_IOS)
+extern "C" {
+#include <native-code.h>
+}
+#endif
+
 using namespace lok;
 
 extern "C" LibreOfficeKit *

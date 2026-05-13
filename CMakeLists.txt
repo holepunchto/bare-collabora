@@ -47,6 +47,13 @@ install(
     PATTERN "bootstraprc"
     PATTERN "fundamentalrc"
     PATTERN "lounorc"
+    PATTERN "unorc"
+
+    # UNO services
+    PATTERN "*.rdb"
+
+    # ICU data
+    PATTERN "ICU.dat"
 
     # Directories
     REGEX "/filter/"
