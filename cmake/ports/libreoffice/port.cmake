@@ -201,6 +201,8 @@ declare_port(
     patches/004-skip-install-on-ios.patch
     patches/005-allow-ios-simulator-on-arm64.patch
     patches/006-curl-ios-disable-pipe2.patch
+    patches/007-install-ios-static-libs.patch
+    patches/008-ios-icu-data-from-env.patch
 )
 
 add_library(libreoffice INTERFACE)
@@ -209,8 +211,62 @@ add_dependencies(libreoffice ${libreoffice})
 
 target_include_directories(
   libreoffice
-  INTERFACE "${libreoffice_SOURCE_DIR}/include"
+  INTERFACE
+    "${libreoffice_SOURCE_DIR}/include"
+    "${libreoffice_BINARY_DIR}/config_host"
+    "${libreoffice_BINARY_DIR}"
 )
+
+if(IOS)
+  target_compile_definitions(
+    libreoffice
+    INTERFACE
+      DISABLE_DYNLOADING
+  )
+
+  set(native_code_h "${libreoffice_BINARY_DIR}/native-code.h")
+
+  set(native_code_py "${libreoffice_SOURCE_DIR}/solenv/bin/native-code.py")
+
+  set(native_code_cmake "${CMAKE_CURRENT_LIST_DIR}/native-code.cmake")
+
+  add_custom_command(
+    OUTPUT "${native_code_h}"
+    COMMAND
+      "${CMAKE_COMMAND}"
+      "-DSOURCE_DIR=${libreoffice_SOURCE_DIR}"
+      "-DOUTPUT=${native_code_h}"
+      -P "${native_code_cmake}"
+    DEPENDS ${libreoffice}
+    VERBATIM
+  )
+
+  add_custom_target(libreoffice_native_code DEPENDS "${native_code_h}")
+
+  add_dependencies(libreoffice libreoffice_native_code)
+endif()
+
+if(APPLE)
+  target_link_libraries(
+    libreoffice
+    INTERFACE
+      "-framework Foundation"
+  )
+
+  if(IOS)
+    target_link_libraries(
+      libreoffice
+      INTERFACE
+        "-framework UIKit"
+    )
+  else()
+    target_link_libraries(
+      libreoffice
+      INTERFACE
+        "-framework AppKit"
+    )
+  endif()
+endif()
 
 # Shared library dependencies that consumers link directly as part of the build.
 set(shared)
@@ -231,26 +287,41 @@ if(APPLE)
     set(asset_base ${content_base}/)
 
     list(APPEND static
+      libabw-0.1.a
       libacclo.a
+      libafdko.a
       libaffine_uno_uno.a
       libanalysislo.a
       libanimcorelo.a
+      libargon2.a
       libavmedialo.a
       libbasegfxlo.a
       libbiblo.a
       libbinaryurplo.a
+      libboost_date_time.a
+      libboost_filesystem.a
+      libboost_iostreams.a
+      libboost_locale.a
+      libboost_system.a
       libbootstraplo.a
+      libbox2d.a
       libcached1.a
       libcalclo.a
       libcanvasfactorylo.a
       libcanvastoolslo.a
+      libcdr-0.1.a
+      libcertdb.a
+      libcerthi.a
       libchartcontrollerlo.a
       libchartcorelo.a
       libcomphelper.a
       libconfigmgrlo.a
       libcppcanvaslo.a
+      libcppunit.a
+      libcryptohi.a
       libctllo.a
       libcuilo.a
+      libcurl.a
       libdatelo.a
       libdbahsqllo.a
       libdbalo.a
@@ -272,9 +343,13 @@ if(APPLE)
       libemboleobj.a
       libemfiolo.a
       libepoxy.a
+      libepubgen-0.1.a
       libevtattlo.a
+      libexpat.a
+      libexttextcat-2.0.a
       libfilelo.a
       libfilterconfiglo.a
+      libfindsofficepath.a
       libflashlo.a
       libflatlo.a
       libforlo.a
@@ -284,19 +359,31 @@ if(APPLE)
       libfwklo.a
       libgcc3_uno.a
       libgraphicfilterlo.a
+      libgraphite.a
       libguesslanglo.a
+      libharfbuzz.a
+      libhunspell-1.7.a
       libhwplo.a
+      libhyphen.a
       libhyphenlo.a
       libi18nlangtag.a
       libi18npoollo.a
       libi18nsearchlo.a
       libi18nutil.a
       libicglo.a
+      libicudata.a
+      libicui18n.a
+      libicuio.a
+      libicuuc.a
       libintrospectionlo.a
       libinvocadaptlo.a
       libinvocationlo.a
       libiolo.a
+      liblangtag.a
       libLanguageToollo.a
+      liblcms2.a
+      liblibjpeg-turbo.a
+      liblibpng.a
       liblnglo.a
       liblnthlo.a
       liblocalebe1lo.a
@@ -306,26 +393,67 @@ if(APPLE)
       liblocaledata_others.a
       liblog_uno_uno.a
       libMacOSXSpelllo.a
+      libmd4c.a
       libmsfilterlo.a
+      libmspub-0.1.a
       libmswordlo.a
       libmtfrendererlo.a
+      libmwaw-0.3.a
       libmysql_jdbclo.a
+      libmythes-1.2.a
       libnamingservicelo.a
+      libnspr4.a
+      libnss.a
+      libnss_ckfw_builtins.a
+      libnss_freebl.a
+      libnss_freebl_deprecated.a
+      libnssb.a
+      libnssckfw.a
+      libnssdev.a
+      libnsspki.a
+      libnssutil.a
+      libnumbertext-1.0.a
       libnumbertextlo.a
       libodfflatxmllo.a
+      libodfgen-0.1.a
       liboffacclo.a
+      libooopathutils.a
       libooxlo.a
+      liborcus-0.18.a
+      liborcus-mso-0.18.a
+      liborcus-parser-0.18.a
       libpackage2.a
       libpasswordcontainerlo.a
       libpcrlo.a
       libpdffilterlo.a
       libpdfimportlo.a
       libpdfiumlo.a
+      libpk11wrap.a
+      libpkcs7.a
+      libpkcs12.a
+      libpkixcertsel.a
+      libpkixchecker.a
+      libpkixcrlsel.a
+      libpkixmodule.a
+      libpkixparams.a
+      libpkixpki.a
+      libpkixresults.a
+      libpkixstore.a
+      libpkixsystem.a
+      libpkixtop.a
+      libpkixutil.a
+      libplc4.a
+      libplds4.a
+      libprecompiled_system.a
       libPresentationMinimizerlo.a
       libpricinglo.a
       libproxyfaclo.a
+      libraptor2.a
+      librasqal.a
+      librdf.a
       libreflectionlo.a
       libreglo.a
+      librevenge-0.0.a
       librptlo.a
       librptuilo.a
       librptxmllo.a
@@ -341,11 +469,14 @@ if(APPLE)
       libsdlo.a
       libsduilo.a
       libsfxlo.a
+      libsharpyuv.a
       libsimplecanvaslo.a
       libslideshowlo.a
       libsmdlo.a
+      libsmime.a
       libsmlo.a
       libsofficeapp.a
+      libsoftokn.a
       libsolverlo.a
       libsotlo.a
       libspelllo.a
@@ -367,6 +498,7 @@ if(APPLE)
       libt602filterlo.a
       libtextconversiondlgslo.a
       libtextfdlo.a
+      libtiff.a
       libtklo.a
       libtllo.a
       libucb1.a
@@ -378,6 +510,7 @@ if(APPLE)
       libucpimagelo.a
       libucppkg1.a
       libucptdoc1lo.a
+      libulingu.a
       libuno_cppu.a
       libuno_cppuhelpergcc3.a
       libuno_purpenvhelpergcc3.a
@@ -387,28 +520,39 @@ if(APPLE)
       libunordflo.a
       libunoxmllo.a
       libunsafe_uno_uno.a
+      libUseUnixWrappers.a
       libutllo.a
       libuuilo.a
       libuuresolverlo.a
       libvclcanvaslo.a
       libvcllo.a
+      libvisio-0.1.a
+      libwebp.a
+      libwpd-0.10.a
       libwpftcalclo.a
       libwpftdrawlo.a
       libwpftimpresslo.a
       libwpftwriterlo.a
+      libwpg-0.3.a
+      libwps-0.4.a
       libwriterlo.a
       libwriterperfectlo.a
+      libxml2.a
       libxmlfalo.a
       libxmlfdlo.a
       libxmlreaderlo.a
       libxmlscriptlo.a
+      libxmlsec1-nss.a
+      libxmlsec1.a
       libxmlsecurity.a
       libxoflo.a
       libxolo.a
       libxsec_xmlsec.a
+      libxslt.a
       libxsltdlglo.a
       libxsltfilterlo.a
       libxstor.a
+      libzxcvbn-c.a
     )
   else()
     set(content_base instdir/CollaboraOffice.app/Contents)

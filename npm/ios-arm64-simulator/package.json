@@ -3,12 +3,18 @@
   "version": "0.1.0",
   "description": "The iOS ARM simulator 64-bit prebuilds for Collabora",
   "exports": {
-    "./package": "./package.json"
+    "./package": "./package.json",
+    ".": "./index.js"
+  },
+  "imports": {
+    "#assets": "./prebuilds/ios-arm64-simulator/bare-collabora-ios-arm64-simulator/assets"
   },
   "files": [
     "NOTICE",
+    "index.js",
     "prebuilds"
   ],
+  "addon": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/holepunchto/bare-collabora.git"

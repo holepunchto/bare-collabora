@@ -14,6 +14,15 @@
       "darwin": {
         "arm64": "bare-collabora-darwin-arm64",
         "x64": "bare-collabora-darwin-x64"
+      },
+      "ios": {
+        "arm64": {
+          "simulator": "bare-collabora-ios-arm64-simulator",
+          "default": "bare-collabora-ios-arm64"
+        },
+        "x64": {
+          "simulator": "bare-collabora-ios-x64-simulator"
+        }
       }
     }
   },
