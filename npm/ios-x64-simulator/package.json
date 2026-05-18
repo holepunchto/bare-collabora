@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "description": "The iOS Intel simulator 64-bit prebuilds for Collabora",
   "exports": {
-    "./package": "./package.json"
+    "./package": "./package.json",
+    ".": "./index.js"
+  },
+  "imports": {
+    "#assets": "./prebuilds/ios-x64-simulator/bare-collabora-ios-x64-simulator/assets"
   },
   "files": [
     "NOTICE",
+    "index.js",
     "prebuilds"
   ],
   "addon": true,
