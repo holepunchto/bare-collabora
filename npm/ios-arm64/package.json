@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "description": "The iOS ARM 64-bit prebuilds for Collabora",
   "exports": {
-    "./package": "./package.json"
+    "./package": "./package.json",
+    ".": "./index.js"
+  },
+  "imports": {
+    "#assets": "./prebuilds/ios-arm64/bare-collabora-ios-arm64/assets"
   },
   "files": [
     "NOTICE",
+    "index.js",
     "prebuilds"
   ],
   "addon": true,
