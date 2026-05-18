@@ -16,6 +16,12 @@ set(name bare-collabora-${target})
 
 add_bare_module(bare_collabora NAME ${name})
 
+set_target_properties(
+  ${bare_collabora}
+  PROPERTIES
+  CXX_SCAN_FOR_MODULES OFF
+)
+
 target_sources(
   ${bare_collabora}
   PRIVATE
