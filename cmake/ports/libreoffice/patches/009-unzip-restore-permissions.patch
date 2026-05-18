@@ -1,0 +1,14 @@
+diff --git a/solenv/gbuild/UnpackedTarball.mk b/solenv/gbuild/UnpackedTarball.mk
+index 2799bc8ca455..6823242009ce 100644
+--- a/solenv/gbuild/UnpackedTarball.mk
++++ b/solenv/gbuild/UnpackedTarball.mk
+@@ -36,7 +36,8 @@ $(if $(filter-out 0,$(UNPACKED_STRIP_COMPONENTS)),\
+ 	&& UNZIP_DIR=`ls $(UNPACKED_DIR)` \
+ 	&& mv $(UNPACKED_DIR)/$$UNZIP_DIR/* $(UNPACKED_DIR) \
+ 	&& rm -rf $(UNPACKED_DIR)/$$UNZIP_DIR \
+-)
++) \
++&& chmod -R u+rwX,go+rX $(UNPACKED_DIR)
+ endef
+ 
+ define gb_UnpackedTarget__command

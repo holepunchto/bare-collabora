@@ -23,6 +23,10 @@
         "x64": {
           "simulator": "bare-collabora-ios-x64-simulator"
         }
+      },
+      "linux": {
+        "arm64": "bare-collabora-linux-arm64",
+        "x64": "bare-collabora-linux-x64"
       }
     }
   },
