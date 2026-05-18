@@ -38,6 +38,8 @@ foreach(prefix build host)
 
   if(platform MATCHES "darwin|ios")
     set(platform "apple-${platform}")
+  elseif(platform MATCHES "linux")
+    set(platform "gnu-${platform}")
   else()
     message(FATAL_ERROR "Unsupported platform '${platform}'")
   endif()
@@ -189,6 +191,75 @@ if(APPLE)
   list(APPEND args MAKE=gmake)
 endif()
 
+if(LINUX)
+  list(APPEND args
+    --enable-cairo-rgba
+    --enable-epm
+    --enable-extension-integration
+    --enable-hardening-flags
+    --enable-mergelibs
+    --enable-mpl-subset
+    --enable-noto-font
+
+    --with-buildconfig-recorded
+    --with-docrepair-fonts
+    --with-external-dict-dir=/usr/share/hunspell
+    --with-external-hyph-dir=/usr/share/hyphen
+    --with-external-thes-dir=/usr/share/mythes
+    --with-fonts
+    --with-galleries=no
+    --with-linker-hash-style=both
+    --with-system-dicts
+    --with-system-zlib
+
+    --disable-community-flavor
+    --disable-dbus
+    --disable-dconf
+    --disable-evolution2
+    --disable-ext-nlpsolver
+    --disable-ext-wiki-publisher
+    --disable-firebird-sdbc
+    --disable-gio
+    --disable-gstreamer-1-0
+    --disable-gtk3
+    --disable-gui
+    --disable-kf5
+    --disable-lotuswordpro
+    --disable-mariadb-sdbc
+    --disable-online-update
+    --disable-postgresql-sdbc
+    --disable-qt5
+    --disable-randr
+    --disable-report-builder
+    --disable-scripting-beanshell
+    --disable-scripting-javascript
+    --disable-sdremote
+    --disable-sdremote-bluetooth
+
+    --without-gssapi
+    --without-help
+    --without-java
+    --without-krb5
+    --without-package-format
+    --without-system-cairo
+    --without-system-curl
+    --without-system-expat
+    --without-system-fontconfig
+    --without-system-freetype
+    --without-system-graphite
+    --without-system-harfbuzz
+    --without-system-icu
+    --without-system-jars
+    --without-system-jpeg
+    --without-system-libpng
+    --without-system-libxml
+    --without-system-nss
+    --without-system-openssl
+    --without-system-postgresql
+    --without-templates
+  )
+endif()
+
 declare_port(
   "github:LibreOffice/core#distro/collabora/co-25.04"
   libreoffice
@@ -198,11 +269,12 @@ declare_port(
     patches/001-uno-ini-env-override.patch
     patches/002-configure-out-of-tree.patch
     patches/003-forward-cross-compiling-state.patch
-    patches/004-skip-install-on-ios.patch
+    patches/004-skip-install.patch
     patches/005-allow-ios-simulator-on-arm64.patch
     patches/006-curl-ios-disable-pipe2.patch
     patches/007-install-ios-static-libs.patch
     patches/008-ios-icu-data-from-env.patch
+    patches/009-unzip-restore-permissions.patch
 )
 
 add_library(libreoffice INTERFACE)
@@ -695,6 +767,166 @@ if(APPLE)
       libxmlsecurity.dylib
     )
   endif()
+endif()
+
+if(LINUX)
+  set(content_base instdir)
+
+  set(library_base ${content_base}/program)
+
+  set(asset_base ${content_base}/)
+
+  list(APPEND shared
+    libcairo-lo.so.2
+    libcurl.so.4
+    libexslt.so.0
+    libfontconfig-lo.so.1.15.0
+    libgcc3_uno.so
+    libi18nlangtag.so
+    libicudata.so.75
+    libicui18n.so.75
+    libicuuc.so.75
+    liblangtag-lo.so.1
+    liblcms2.so.2
+    liblocaledata_en.so
+    libmergedlo.so
+    libnspr4.so
+    libnss3.so
+    libnssutil3.so
+    libpdfiumlo.so
+    libpixman-1.so.0
+    libplc4.so
+    libplds4.so
+    libraptor2-lo.so.0
+    librasqal-lo.so.3
+    librdf-lo.so.0
+    libreglo.so
+    libsmime3.so
+    libstorelo.so
+    libuno_cppu.so.3
+    libuno_cppuhelpergcc3.so.3
+    libuno_sal.so.3
+    libuno_salhelpergcc3.so.3
+    libunoidllo.so
+    libxml2.so.16
+    libxmlreaderlo.so
+    libxslt.so.1
+  )
+
+  list(APPEND modules
+    libLanguageToollo.so
+    libPresentationMinimizerlo.so
+    libabplo.so
+    libacclo.so
+    libaffine_uno_uno.so
+    libanalysislo.so
+    libanimcorelo.so
+    libbasegfxlo.so
+    libbiblo.so
+    libbinaryurplo.so
+    libbootstraplo.so
+    libcached1.so
+    libcairocanvaslo.so
+    libcalclo.so
+    libcmdmaillo.so
+    libcomphelper.so
+    libcuilo.so
+    libdatelo.so
+    libdbahsqllo.so
+    libdbalo.so
+    libdbaselo.so
+    libdbaxmllo.so
+    libdbplo.so
+    libdbpool2.so
+    libdbulo.so
+    libdeploymentgui.so
+    libetonyek-0.1-lo.so.1
+    libfilelo.so
+    libflashlo.so
+    libflatlo.so
+    libfreebl3.so
+    libfreeblpriv3.so
+    libgraphicfilterlo.so
+    libhwplo.so
+    libintrospectionlo.so
+    libinvocadaptlo.so
+    libinvocationlo.so
+    libiolo.so
+    liblocaledata_es.so
+    liblocaledata_euro.so
+    liblocaledata_others.so
+    liblog_uno_uno.so
+    libloglo.so
+    libmigrationoo2lo.so
+    libmigrationoo3lo.so
+    libmozbootstraplo.so
+    libmswordlo.so
+    libmwaw-0.3-lo.so.3
+    libmysql_jdbclo.so
+    libnamingservicelo.so
+    libnssckbi.so
+    libnssdbm3.so
+    libodbclo.so
+    libodfgen-0.1-lo.so.1
+    liborcus-0.18.so.0
+    liborcus-parser-0.18.so.0
+    libpcrlo.so
+    libpdffilterlo.so
+    libpdfimportlo.so
+    libpricinglo.so
+    libproxyfaclo.so
+    libreflectionlo.so
+    librevenge-0.0-lo.so.0
+    librptlo.so
+    librptuilo.so
+    librptxmllo.so
+    libsal_textenclo.so
+    libsaxlo.so
+    libscdlo.so
+    libscfiltlo.so
+    libsclo.so
+    libscnlo.so
+    libscuilo.so
+    libsdbc2.so
+    libsdbtlo.so
+    libsddlo.so
+    libsdlo.so
+    libsduilo.so
+    libslideshowlo.so
+    libsmdlo.so
+    libsmlo.so
+    libsoftokn3.so
+    libsolverlo.so
+    libsqlite3.so
+    libssl3.so
+    libstaroffice-0.0-lo.so.0
+    libstocserviceslo.so
+    libstoragefdlo.so
+    libsvgfilterlo.so
+    libsw_writerfilterlo.so
+    libswdlo.so
+    libswlo.so
+    libswuilo.so
+    libt602filterlo.so
+    libtextconversiondlgslo.so
+    libtllo.so
+    libucbhelper.so
+    libucppkg1.so
+    libuno_purpenvhelpergcc3.so.3
+    libunopkgapp.so
+    libunsafe_uno_uno.so
+    libuuresolverlo.so
+    libwpd-0.10-lo.so.10
+    libwpftcalclo.so
+    libwpftdrawlo.so
+    libwpftimpresslo.so
+    libwpftwriterlo.so
+    libwpg-0.3-lo.so.3
+    libwps-0.4-lo.so.4
+    libwriterlo.so
+    libwriterperfectlo.so
+    libxmlsecurity.so
+  )
 endif()
 
 set(libraries "${libreoffice_BINARY_DIR}/${library_base}")

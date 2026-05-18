@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const { execFileSync } = require('child_process')
-const { MachO } = require('bare-lief')
+const { MachO, ELF } = require('bare-lief')
 
 const libraries = process.argv.slice(2)
 
@@ -22,5 +22,17 @@ for (const library of libraries) {
     fat.toDisk(library)
 
     execFileSync('codesign', ['--sign', '-', '--force', library], { stdio: 'ignore' })
+  } else if (/\.so(\.([0-9]+(\.[0-9]+)*))?$/.test(library)) {
+    const elf = ELF.Binary.parse(fs.readFileSync(library))
+
+    const soname = elf.getDynamicEntry(ELF.DynamicEntry.TAG.SONAME)
+
+    if (soname) {
+      soname.name = path.basename(library)
+    } else {
+      elf.addDynamicEntry(new ELF.DynamicEntry.SharedObject(path.basename(library)))
+    }
+
+    elf.toDisk(library)
   }
 }

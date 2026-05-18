@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "description": "The Linux ARM 64-bit prebuilds for Collabora",
   "exports": {
-    "./package": "./package.json"
+    "./package": "./package.json",
+    ".": "./index.js"
+  },
+  "imports": {
+    "#assets": "./prebuilds/linux-arm64/bare-collabora-linux-arm64/assets"
   },
   "files": [
     "NOTICE",
+    "index.js",
     "prebuilds"
   ],
   "addon": true,
