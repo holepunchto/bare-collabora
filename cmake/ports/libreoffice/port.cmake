@@ -40,6 +40,8 @@ foreach(prefix build host)
     set(platform "apple-${platform}")
   elseif(platform MATCHES "linux")
     set(platform "gnu-${platform}")
+  elseif(platform MATCHES "android")
+    set(platform "linux-${platform}")
   else()
     message(FATAL_ERROR "Unsupported platform '${platform}'")
   endif()
@@ -47,11 +49,15 @@ foreach(prefix build host)
   if(arch MATCHES "arm64|aarch64")
     set(arch "aarch64")
   elseif(arch MATCHES "armv7-a|armeabi-v7a")
-    set(arch "arm")
+    set(arch "armv7a")
+
+    if(platform MATCHES "android")
+      set(platform "${platform}eabi")
+    endif()
   elseif(arch MATCHES "x64|x86_64|amd64")
     set(arch "x86_64")
   elseif(arch MATCHES "x86|i386|i486|i586|i686")
-    set(arch "x86_32")
+    set(arch "i686")
   else()
     message(FATAL_ERROR "Unsupported architecture '${arch}'")
   endif()
@@ -69,6 +75,10 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
   list(APPEND args --enable-debug)
 elseif(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
   list(APPEND args --enable-symbols)
+endif()
+
+if(CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
+  list(APPEND args MAKE=gmake)
 endif()
 
 list(APPEND args
@@ -187,8 +197,6 @@ if(APPLE)
       --without-templates
     )
   endif()
-
-  list(APPEND args MAKE=gmake)
 endif()
 
 if(LINUX)
@@ -260,6 +268,31 @@ if(LINUX)
   )
 endif()
 
+if(ANDROID)
+  string(REGEX REPLACE "^(android-)?([0-9]+).*$" "\\2" android_api_level "${ANDROID_PLATFORM}")
+
+  list(APPEND args
+    --enable-android-lok
+    --enable-pdfimport
+
+    --with-android-api-level=${android_api_level}
+    --with-android-ndk=${ANDROID_NDK}
+    --with-android-sdk=${ANDROID_HOME}
+    --with-android-package-name=com.collabora.libreoffice
+    --with-docrepair-fonts
+
+    --disable-ccache
+    --disable-community-flavor
+    --disable-cups
+    --disable-largefile
+    --disable-scripting-beanshell
+    --disable-scripting-javascript
+
+    --without-export-validation
+    --without-helppack-integration
+  )
+endif()
+
 declare_port(
   "github:LibreOffice/core#distro/collabora/co-25.04"
   libreoffice
@@ -267,14 +300,26 @@ declare_port(
   ARGS ${args}
   PATCHES
     patches/001-uno-ini-env-override.patch
-    patches/002-configure-out-of-tree.patch
-    patches/003-forward-cross-compiling-state.patch
-    patches/004-skip-install.patch
-    patches/005-allow-ios-simulator-on-arm64.patch
-    patches/006-curl-ios-disable-pipe2.patch
-    patches/007-install-ios-static-libs.patch
-    patches/008-ios-icu-data-from-env.patch
-    patches/009-unzip-restore-permissions.patch
+    patches/002-forward-cross-compiling-state.patch
+    patches/003-skip-install.patch
+    patches/004-allow-ios-simulator-on-arm64.patch
+    patches/005-curl-ios-disable-pipe2.patch
+    patches/006-install-ios-static-libs.patch
+    patches/007-ios-icu-data-from-env.patch
+    patches/008-unzip-restore-permissions.patch
+    patches/009-build-side-lib-ext.patch
+    patches/010-argon2-android-kernel-name.patch
+    patches/011-argon2-use-make-ar.patch
+    patches/012-pixman-android-with-pic.patch
+    patches/013-install-android-static-libs.patch
+    patches/014-lo-all-static-libs-android-nss.patch
+    patches/015-libxml2-android-with-pic.patch
+    patches/016-libxslt-android-with-pic.patch
+    patches/017-android-app-data-dir-fallback.patch
+    patches/018-osl-dladdr-without-dlapi.patch
+    patches/019-android-null-assetmgr-noent.patch
+    patches/020-resmgr-app-data-dir-fallback.patch
+    patches/021-android-null-javavm-guards.patch
 )
 
 add_library(libreoffice INTERFACE)
@@ -289,7 +334,7 @@ target_include_directories(
     "${libreoffice_BINARY_DIR}"
 )
 
-if(IOS)
+if(IOS OR ANDROID)
   target_compile_definitions(
     libreoffice
     INTERFACE
@@ -338,6 +383,16 @@ if(APPLE)
         "-framework AppKit"
     )
   endif()
+endif()
+
+if(ANDROID)
+  target_link_libraries(
+    libreoffice
+    INTERFACE
+      android
+      log
+      z
+  )
 endif()
 
 # Shared library dependencies that consumers link directly as part of the build.
@@ -926,6 +981,302 @@ if(LINUX)
     libwriterlo.so
     libwriterperfectlo.so
     libxmlsecurity.so
+  )
+endif()
+
+if(ANDROID)
+  set(content_base instdir)
+
+  set(library_base ${content_base}/program)
+
+  set(asset_base ${content_base}/)
+
+  list(APPEND static
+    libCbc.a
+    libCbcSolver.a
+    libCgl.a
+    libClp.a
+    libClpSolver.a
+    libCoinMP.a
+    libCoinUtils.a
+    libLanguageToollo.a
+    libOsi.a
+    libOsiClp.a
+    libPresentationMinimizerlo.a
+    libUseUnixWrappers.a
+    libabw-0.1.a
+    libacclo.a
+    libafdko.a
+    libaffine_uno_uno.a
+    libanalysislo.a
+    libanimcorelo.a
+    libargon2.a
+    libavmedialo.a
+    libbasegfxlo.a
+    libbiblo.a
+    libbinaryurplo.a
+    libboost_date_time.a
+    libboost_filesystem.a
+    libboost_iostreams.a
+    libboost_locale.a
+    libboost_system.a
+    libbootstraplo.a
+    libbox2d.a
+    libcached1.a
+    libcairo.a
+    libcalclo.a
+    libcanvasfactorylo.a
+    libcanvastoolslo.a
+    libcdr-0.1.a
+    libcdr-internal.a
+    libcertdb.a
+    libcerthi.a
+    libchartcontrollerlo.a
+    libchartcorelo.a
+    libcomphelper.a
+    libconfigmgrlo.a
+    libcppcanvaslo.a
+    libcrypto.a
+    libcryptohi.a
+    libctllo.a
+    libcuilo.a
+    libcurl.a
+    libcurlu.a
+    libdatelo.a
+    libdbahsqllo.a
+    libdbalo.a
+    libdbaselo.a
+    libdbaxmllo.a
+    libdbplo.a
+    libdbpool2.a
+    libdbtoolslo.a
+    libdbulo.a
+    libdeployment.a
+    libdeploymentgui.a
+    libdeploymentmisclo.a
+    libdesktopbe1lo.a
+    libdocmodello.a
+    libdrawinglayercorelo.a
+    libdrawinglayerlo.a
+    libeditenglo.a
+    libembobj.a
+    libemboleobj.a
+    libemfiolo.a
+    libepoxy.a
+    libepubgen-0.1.a
+    libepubgen_internal.a
+    libevtattlo.a
+    libexpat.a
+    libexttextcat-2.0.a
+    libfilelo.a
+    libfilterconfiglo.a
+    libfindsofficepath.a
+    libflashlo.a
+    libflatlo.a
+    libfontconfig.a
+    libforlo.a
+    libforuilo.a
+    libfreebl.a
+    libfreetype.a
+    libfrmlo.a
+    libfsstoragelo.a
+    libfwklo.a
+    libgcc3_uno.a
+    libgraphicfilterlo.a
+    libgraphite.a
+    libguesslanglo.a
+    libharfbuzz.a
+    libhunspell-1.7.a
+    libhwplo.a
+    libhyphen.a
+    libhyphenlo.a
+    libi18nlangtag.a
+    libi18npoollo.a
+    libi18nsearchlo.a
+    libi18nutil.a
+    libicglo.a
+    libicudata.a
+    libicui18n.a
+    libicuio.a
+    libicuuc.a
+    libintrospectionlo.a
+    libinvocadaptlo.a
+    libinvocationlo.a
+    libiolo.a
+    liblangtag.a
+    liblcms2.a
+    liblibjpeg-turbo.a
+    liblibpng.a
+    liblnglo.a
+    liblnthlo.a
+    liblo-bootstrap.a
+    liblocalebe1lo.a
+    liblocaledata_en.a
+    liblocaledata_es.a
+    liblocaledata_euro.a
+    liblocaledata_others.a
+    liblog_uno_uno.a
+    libloglo.a
+    libmd4c.a
+    libmsfilterlo.a
+    libmspub-0.1.a
+    libmswordlo.a
+    libmtfrendererlo.a
+    libmwaw-0.3.a
+    libmysql_jdbclo.a
+    libmythes-1.2.a
+    libnamingservicelo.a
+    libnspr4.a
+    libnss.a
+    libnssb.a
+    libnssckfw.a
+    libnssdev.a
+    libnsspki.a
+    libnssutil.a
+    libnumbertext-1.0.a
+    libnumbertextlo.a
+    libodfflatxmllo.a
+    libodfgen-0.1.a
+    liboffacclo.a
+    libooopathutils.a
+    libooxlo.a
+    liborcus-0.18.a
+    liborcus-mso-0.18.a
+    liborcus-parser-0.18.a
+    libpackage2.a
+    libpasswordcontainerlo.a
+    libpcrlo.a
+    libpdffilterlo.a
+    libpdfimportlo.a
+    libpdfiumlo.a
+    libpixman-1.a
+    libpk11wrap.a
+    libpkcs12.a
+    libpkcs7.a
+    libpkixcertsel.a
+    libpkixchecker.a
+    libpkixcrlsel.a
+    libpkixmodule.a
+    libpkixparams.a
+    libpkixpki.a
+    libpkixresults.a
+    libpkixstore.a
+    libpkixsystem.a
+    libpkixtop.a
+    libpkixutil.a
+    libplc4.a
+    libplds4.a
+    libprecompiled_system.a
+    libpricinglo.a
+    libproxyfaclo.a
+    libraptor2.a
+    librasqal.a
+    librdf.a
+    libreflectionlo.a
+    libreglo.a
+    librevenge-0.0.a
+    librptlo.a
+    librptuilo.a
+    librptxmllo.a
+    libsaxlo.a
+    libsblo.a
+    libscdlo.a
+    libscfiltlo.a
+    libsclo.a
+    libscuilo.a
+    libsdbc2.a
+    libsdbtlo.a
+    libsddlo.a
+    libsdlo.a
+    libsduilo.a
+    libsfxlo.a
+    libsharpyuv.a
+    libsharpyuv_neon.a
+    libsharpyuv_sse2.a
+    libsimplecanvaslo.a
+    libslideshowlo.a
+    libsmdlo.a
+    libsmime.a
+    libsmlo.a
+    libsofficeapp.a
+    libsoftokn.a
+    libsolverlo.a
+    libsotlo.a
+    libspelllo.a
+    libspllo.a
+    libsrtrs1.a
+    libssl.a
+    libstocserviceslo.a
+    libstoragefdlo.a
+    libstorelo.a
+    libsvgfilterlo.a
+    libsvgiolo.a
+    libsvllo.a
+    libsvtlo.a
+    libsvxcorelo.a
+    libsvxlo.a
+    libsw_writerfilterlo.a
+    libswdlo.a
+    libswlo.a
+    libswuilo.a
+    libt602filterlo.a
+    libtextconversiondlgslo.a
+    libtextfdlo.a
+    libtiff.a
+    libtklo.a
+    libtllo.a
+    libucb1.a
+    libucbhelper.a
+    libucpexpand1lo.a
+    libucpextlo.a
+    libucpfile1.a
+    libucphier1.a
+    libucpimagelo.a
+    libucppkg1.a
+    libucptdoc1lo.a
+    libulingu.a
+    libuno_cppu.a
+    libuno_cppuhelpergcc3.a
+    libuno_purpenvhelpergcc3.a
+    libuno_sal.a
+    libuno_salhelpergcc3.a
+    libunoidllo.a
+    libunordflo.a
+    libunoxmllo.a
+    libunsafe_uno_uno.a
+    libutllo.a
+    libuuilo.a
+    libuuresolverlo.a
+    libvclcanvaslo.a
+    libvcllo.a
+    libvisio-0.1.a
+    libvisio-internal.a
+    libwebp.a
+    libwpd-0.10.a
+    libwpftcalclo.a
+    libwpftdrawlo.a
+    libwpftimpresslo.a
+    libwpftwriterlo.a
+    libwpg-0.3.a
+    libwps-0.4.a
+    libwriterlo.a
+    libwriterperfectlo.a
+    libxml2.a
+    libxmlfalo.a
+    libxmlfdlo.a
+    libxmlreaderlo.a
+    libxmlscriptlo.a
+    libxmlsec1-nss.a
+    libxmlsec1.a
+    libxmlsecurity.a
+    libxoflo.a
+    libxolo.a
+    libxsec_xmlsec.a
+    libxslt.a
+    libxsltdlglo.a
+    libxsltfilterlo.a
+    libxstor.a
+    libzxcvbn-c.a
   )
 endif()
 

@@ -1,0 +1,30 @@
+diff --git a/android/CustomTarget_lo_android.mk b/android/CustomTarget_lo_android.mk
+index 815548cdf3a8..6f03d7a22ffa 100644
+--- a/android/CustomTarget_lo_android.mk
++++ b/android/CustomTarget_lo_android.mk
+@@ -16,6 +16,25 @@ $(call gb_CustomTarget_get_target,android/loandroid3) : \
+ $(loandroid3_DIR)/done : $(call gb_Postprocess_get_target,AllModulesButInstsetNative)
+ 	$(call gb_Output_announce,$(subst $(WORKDIR)/,,$@),$(true),MAK,2)
+ 	$(call gb_Trace_StartRange,$(subst $(WORKDIR)/,,$@),MAK)
++
++	# Mirror every archive lo-all-static-libs enumerates into $(INSTDIR)/$(LIBO_LIB_FOLDER) so
++	# downstream consumers can link from a single location. First-wins on basename collisions
++	# preserves link-order semantics.
++	seen=""; \
++	for lib in `$(SRCDIR)/bin/lo-all-static-libs`; do \
++	    case "$$lib" in *.a) ;; *) continue ;; esac; \
++	    test -f "$$lib" || continue; \
++	    case "$$lib" in $(INSTDIR)/$(LIBO_LIB_FOLDER)/*) continue ;; esac; \
++	    bn=`basename "$$lib"`; \
++	    case " $$seen " in *" $$bn "*) continue ;; esac; \
++	    seen="$$seen $$bn"; \
++	    cp -f "$$lib" "$(INSTDIR)/$(LIBO_LIB_FOLDER)/$$bn"; \
++	done
++
++	# Stage the ICU data file alongside the other program-level resources so it can be
++	# shipped as part of the install set.
++	cp $(WORKDIR)/UnpackedTarball/icu/source/data/in/icudt$(ICU_MAJOR)l.dat $(INSTDIR)/$(LIBO_LIB_FOLDER)/ICU.dat
++
+ 	cd $(SRCDIR)/android/source && $(MAKE) all
+ ifeq ($(ENABLE_JAVA),TRUE)
+ # Copy to $(BUILDDIR)/instsetoo_native as that is where the tinderbox build script
