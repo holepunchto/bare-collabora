@@ -83,9 +83,24 @@ bare_collabora_document_open(
 
   uv_mutex_lock(&bare_collabora__lock);
 
-  auto document = new bare_collabora_document_t(bare_collabora__kit->documentLoad(url.c_str()));
+  auto handle = bare_collabora__kit->documentLoad(url.c_str());
+
+  if (!handle) {
+    auto message = bare_collabora__kit->getError();
+
+    err = js_throw_error(env, nullptr, message ? message : "documentLoad() failed");
+    assert(err == 0);
+
+    if (message) bare_collabora__kit->freeError(message);
+
+    uv_mutex_unlock(&bare_collabora__lock);
+
+    throw js_pending_exception;
+  }
 
   uv_mutex_unlock(&bare_collabora__lock);
+
+  auto document = new bare_collabora_document_t(handle);
 
   js_external_t<bare_collabora_document_t> result;
   err = js_create_external<bare_collabora__on_document_finalize>(env, document, result);
@@ -97,20 +112,39 @@ bare_collabora_document_open(
   return result;
 }
 
-static bool
+static void
 bare_collabora_document_save_as(
-  js_env_t *,
+  js_env_t *env,
   js_receiver_t,
   bare_collabora_document_t *document,
   std::string url,
   std::optional<std::string> format,
   std::optional<std::string> options
 ) {
-  return document->handle->saveAs(
+  int err;
+
+  uv_mutex_lock(&bare_collabora__lock);
+
+  auto ok = document->handle->saveAs(
     url.c_str(),
     format.has_value() ? format->c_str() : nullptr,
     options.has_value() ? options->c_str() : nullptr
   );
+
+  if (!ok) {
+    auto message = bare_collabora__kit->getError();
+
+    err = js_throw_error(env, nullptr, message ? message : "saveAs() failed");
+    assert(err == 0);
+
+    if (message) bare_collabora__kit->freeError(message);
+
+    uv_mutex_unlock(&bare_collabora__lock);
+
+    throw js_pending_exception;
+  }
+
+  uv_mutex_unlock(&bare_collabora__lock);
 }
 
 static js_value_t *
