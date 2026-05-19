@@ -61,8 +61,13 @@ install(
     # ICU data
     PATTERN "ICU.dat"
 
+    # Fontconfig
+    PATTERN "fonts.conf"
+    PATTERN "*.conf"
+
     # Directories
     REGEX "/filter/"
+    REGEX "/fontconfig/"
     REGEX "/gallery/"
     REGEX "/liblangtag/"
     REGEX "/palette/"

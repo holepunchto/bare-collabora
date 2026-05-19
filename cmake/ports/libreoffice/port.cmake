@@ -320,6 +320,7 @@ declare_port(
     patches/019-android-null-assetmgr-noent.patch
     patches/020-resmgr-app-data-dir-fallback.patch
     patches/021-android-null-javavm-guards.patch
+    patches/022-fontconfig-data-all-platforms.patch
 )
 
 add_library(libreoffice INTERFACE)
