@@ -9,7 +9,7 @@
 
 #include <LibreOfficeKit/LibreOfficeKit.hxx>
 
-#if defined(BARE_TARGET_IOS)
+#if defined(DISABLE_DYNLOADING)
 extern "C" {
 #include <native-code.h>
 }

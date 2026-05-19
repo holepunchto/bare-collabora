@@ -1,0 +1,12 @@
+diff --git a/external/libxml2/ExternalProject_libxml2.mk b/external/libxml2/ExternalProject_libxml2.mk
+index e42cc4797477..32ffc07cb491 100644
+--- a/external/libxml2/ExternalProject_libxml2.mk
++++ b/external/libxml2/ExternalProject_libxml2.mk
+@@ -46,6 +46,7 @@ $(call gb_ExternalProject_get_state_target,libxml2,build):
+ 				$(if $(SYSBASE),-I$(SYSBASE)/usr/include) \
+ 				$(call gb_ExternalProject_get_build_flags,libxml2)" \
+ 			$(if $(filter TRUE,$(DISABLE_DYNLOADING)),--disable-shared,--disable-static) \
++			$(if $(filter ANDROID,$(OS)),--with-pic) \
+ 		&& $(MAKE) libxml2.la xmllint \
+ 	)
+ 	$(call gb_Trace_EndRange,libxml2,EXTERNAL)

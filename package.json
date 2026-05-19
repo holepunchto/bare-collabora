@@ -11,6 +11,12 @@
   },
   "imports": {
     "#binding": {
+      "android": {
+        "arm": "bare-collabora-android-arm",
+        "arm64": "bare-collabora-android-arm64",
+        "ia32": "bare-collabora-android-ia32",
+        "x64": "bare-collabora-android-x64"
+      },
       "darwin": {
         "arm64": "bare-collabora-darwin-arm64",
         "x64": "bare-collabora-darwin-x64"
@@ -59,6 +65,19 @@
   },
   "homepage": "https://github.com/holepunchto/bare-collabora#readme",
   "dependencies": {
+    "bare-collabora-android-arm": "^0.1.0",
+    "bare-collabora-android-arm64": "^0.1.0",
+    "bare-collabora-android-ia32": "^0.1.0",
+    "bare-collabora-android-x64": "^0.1.0",
+    "bare-collabora-darwin-arm64": "^0.1.0",
+    "bare-collabora-darwin-x64": "^0.1.0",
+    "bare-collabora-ios-arm64": "^0.1.0",
+    "bare-collabora-ios-arm64-simulator": "^0.1.0",
+    "bare-collabora-ios-x64-simulator": "^0.1.0",
+    "bare-collabora-linux-arm64": "^0.1.0",
+    "bare-collabora-linux-x64": "^0.1.0",
+    "bare-collabora-win32-arm64": "^0.1.0",
+    "bare-collabora-win32-x64": "^0.1.0",
     "bare-env": "^3.0.0",
     "bare-path": "^3.0.0",
     "bare-url": "^2.4.1"

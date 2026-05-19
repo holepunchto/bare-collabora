@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "description": "The Android Intel 32-bit prebuilds for Collabora",
   "exports": {
-    "./package": "./package.json"
+    "./package": "./package.json",
+    ".": "./index.js"
+  },
+  "imports": {
+    "#assets": "./prebuilds/android-ia32/bare-collabora-android-ia32/assets"
   },
   "files": [
     "NOTICE",
+    "index.js",
     "prebuilds"
   ],
   "addon": true,
