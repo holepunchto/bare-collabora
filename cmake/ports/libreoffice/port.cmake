@@ -285,6 +285,7 @@ if(ANDROID)
     --disable-community-flavor
     --disable-cups
     --disable-largefile
+    --disable-nss
     --disable-scripting-beanshell
     --disable-scripting-javascript
 
@@ -321,6 +322,8 @@ declare_port(
     patches/020-resmgr-app-data-dir-fallback.patch
     patches/021-android-null-javavm-guards.patch
     patches/022-fontconfig-data-all-platforms.patch
+    patches/023-android-makefile-shared-no-nss.patch
+    patches/024-native-code-graphic-export.patch
 )
 
 add_library(libreoffice INTERFACE)
@@ -1030,15 +1033,12 @@ if(ANDROID)
     libcanvastoolslo.a
     libcdr-0.1.a
     libcdr-internal.a
-    libcertdb.a
-    libcerthi.a
     libchartcontrollerlo.a
     libchartcorelo.a
     libcomphelper.a
     libconfigmgrlo.a
     libcppcanvaslo.a
     libcrypto.a
-    libcryptohi.a
     libctllo.a
     libcuilo.a
     libcurl.a
@@ -1077,7 +1077,6 @@ if(ANDROID)
     libfontconfig.a
     libforlo.a
     libforuilo.a
-    libfreebl.a
     libfreetype.a
     libfrmlo.a
     libfsstoragelo.a
@@ -1127,13 +1126,6 @@ if(ANDROID)
     libmysql_jdbclo.a
     libmythes-1.2.a
     libnamingservicelo.a
-    libnspr4.a
-    libnss.a
-    libnssb.a
-    libnssckfw.a
-    libnssdev.a
-    libnsspki.a
-    libnssutil.a
     libnumbertext-1.0.a
     libnumbertextlo.a
     libodfflatxmllo.a
@@ -1151,22 +1143,6 @@ if(ANDROID)
     libpdfimportlo.a
     libpdfiumlo.a
     libpixman-1.a
-    libpk11wrap.a
-    libpkcs12.a
-    libpkcs7.a
-    libpkixcertsel.a
-    libpkixchecker.a
-    libpkixcrlsel.a
-    libpkixmodule.a
-    libpkixparams.a
-    libpkixpki.a
-    libpkixresults.a
-    libpkixstore.a
-    libpkixsystem.a
-    libpkixtop.a
-    libpkixutil.a
-    libplc4.a
-    libplds4.a
     libprecompiled_system.a
     libpricinglo.a
     libproxyfaclo.a
@@ -1197,10 +1173,8 @@ if(ANDROID)
     libsimplecanvaslo.a
     libslideshowlo.a
     libsmdlo.a
-    libsmime.a
     libsmlo.a
     libsofficeapp.a
-    libsoftokn.a
     libsolverlo.a
     libsotlo.a
     libspelllo.a
@@ -1267,7 +1241,6 @@ if(ANDROID)
     libxmlfdlo.a
     libxmlreaderlo.a
     libxmlscriptlo.a
-    libxmlsec1-nss.a
     libxmlsec1.a
     libxmlsecurity.a
     libxoflo.a
