@@ -298,6 +298,7 @@ declare_port(
   "github:LibreOffice/core#distro/collabora/co-25.04"
   libreoffice
   AUTOTOOLS
+  ENTRYPOINT <SOURCE_DIR>/autogen.sh
   ARGS ${args}
   PATCHES
     patches/001-uno-ini-env-override.patch
