@@ -58,7 +58,7 @@ jobs:
     name: Build / ${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.tags }}
     steps:
       - uses: holepunchto/actions/bare-base@v1
-      - run: sudo apt install gperf
+      - run: sudo apt install gperf nasm
         if: ${{ matrix.platform == 'linux' || matrix.platform == 'android' }}
       - run: brew install autoconf automake libtool make gperf
         if: ${{ matrix.platform == 'darwin' || matrix.platform == 'ios' }}
