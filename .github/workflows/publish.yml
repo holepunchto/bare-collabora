@@ -60,7 +60,7 @@ jobs:
       - uses: holepunchto/actions/bare-base@v1
       - run: sudo apt install autoconf automake autopoint libtool gperf bison flex pkg-config zip zlib1g-dev
         if: ${{ matrix.platform == 'linux' || matrix.platform == 'android' }}
-      - run: brew install autoconf automake libtool make
+      - run: brew install autoconf automake libtool make gperf
         if: ${{ matrix.platform == 'darwin' || matrix.platform == 'ios' }}
       - uses: holepunchto/actions/compile-prebuilds@v1
         with:
