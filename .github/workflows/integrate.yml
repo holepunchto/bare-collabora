@@ -43,4 +43,5 @@ jobs:
         with:
           platform: ${{ matrix.platform }}
           arch: ${{ matrix.arch }}
+          prefix: npm/${{ matrix.platform }}-${{ matrix.arch }}/prebuilds
       - run: npm test
