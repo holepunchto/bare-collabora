@@ -306,7 +306,7 @@ set(bundle_url "https://git-bundles.libreoffice.org/core.bundle")
 
 set(bundle_path "${LIBREOFFICE_BUNDLE_PATH}")
 
-if(NOT EXISTS "${bundle_path }")
+if(NOT EXISTS "${bundle_path}")
   file(DOWNLOAD "${bundle_url}" "${bundle_path}" SHOW_PROGRESS STATUS bundle_status)
 
   list(GET bundle_status 0 bundle_code)
