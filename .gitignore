@@ -4,5 +4,4 @@ sandbox
 coverage
 build
 prebuilds
-install
 package-lock.json
