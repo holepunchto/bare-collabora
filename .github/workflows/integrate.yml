@@ -44,4 +44,10 @@ jobs:
           platform: ${{ matrix.platform }}
           arch: ${{ matrix.arch }}
           flags: --debug
+      - uses: actions/upload-artifact@v7
+        with:
+          name: libreoffice-config-log-${{ matrix.platform }}-${{ matrix.arch }}
+          path: build/_ports/git+bundle+libreoffice-core/src/git+bundle+libreoffice-core/config.log
+          if-no-files-found: warn
+        if: always()
       - run: npm test
