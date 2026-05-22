@@ -1,5 +1,13 @@
 include_guard(GLOBAL)
 
+set(
+  LIBREOFFICE_BUNDLE_PATH
+  "${CMAKE_BINARY_DIR}/_bundles/libreoffice-core.bundle"
+  CACHE
+  PATH
+  "Path to a pre-downloaded LibreOffice core.bundle"
+)
+
 set(args)
 
 set(build_platform ${CMAKE_HOST_SYSTEM_NAME})
@@ -294,8 +302,26 @@ if(ANDROID)
   )
 endif()
 
+set(bundle_url "https://git-bundles.libreoffice.org/core.bundle")
+
+set(bundle_path "${LIBREOFFICE_BUNDLE_PATH}")
+
+if(NOT EXISTS "${bundle_path }")
+  file(DOWNLOAD "${bundle_url}" "${bundle_path }" SHOW_PROGRESS STATUS bundle_status)
+
+  list(GET bundle_status 0 bundle_code)
+
+  if(NOT bundle_code EQUAL 0)
+    list(GET bundle_status 1 bundle_error)
+
+    file(REMOVE "${bundle_path }")
+
+    message(FATAL_ERROR "Failed to download LibreOffice git bundle: ${bundle_error}")
+  endif()
+endif()
+
 declare_port(
-  "github:LibreOffice/core#distro/collabora/co-25.04"
+  "git:${bundle_path}#distro/collabora/co-25.04"
   libreoffice
   AUTOTOOLS
   ENTRYPOINT <SOURCE_DIR>/autogen.sh
