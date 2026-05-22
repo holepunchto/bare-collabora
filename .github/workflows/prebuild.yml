@@ -65,7 +65,13 @@ jobs:
           arch: ${{ matrix.arch }}
           flags: ${{ matrix.flags }}
           tags: ${{ matrix.tags}}
-          upload: true
+          prefix: install/${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.tags }}/prebuilds
+      - uses: holepunchto/actions/upload-prebuilds@v1
+        with:
+          platform: ${{ matrix.platform }}
+          arch: ${{ matrix.arch }}
+          tags: ${{ matrix.tags}}
+          prefix: install
   merge:
     runs-on: ubuntu-latest
     needs: prebuild
