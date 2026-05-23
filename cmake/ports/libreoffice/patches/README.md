@@ -46,6 +46,14 @@ Extend `ios/CustomTarget_iOS_setup.mk` to mirror every `.a` enumerated by `bin/l
 
 On iOS, accept `LIBREOFFICE_ICU_DATA` as a path override for `ICU.dat`. Falls back to the existing `[bundlePath]/ICU.dat` lookup when unset. Useful when the embedder ships ICU data inside a framework resource directory instead of the main app bundle.
 
+### 025 - `nasm-ios-mach-o`
+
+Add `ios*` to the host-OS case that selects the NASM object format. Without this, an iOS x86_64 simulator host falls through to the `ELF ?` default and `NAFLAGS` ends up `-felf -DELF -DPIC`; the assembler then can't see NASM macros like `collect_args` in libjpeg-turbo's SIMD sources. iOS targets the same Mach-O / Mach-O64 formats as macOS, so this is just extending the existing branch.
+
+### 026 - `nss-ios-use-64`
+
+In `external/nss/ExternalProject_nss.mk`, include `iOS` in the OS filter that passes `USE_64=1 CPU_ARCH=x86_64` to NSS when `CPUNAME=X86_64`. Without `USE_64`, NSS picks the 32-bit code path in `lib/freebl/drbg.c` and `PR_STATIC_ASSERT(sizeof(size_t) <= 4)` fails the compile on a 64-bit iOS simulator host. The `AARCH64` branch on the next line is already OS-agnostic so iOS arm64 isn't affected.
+
 ## Android
 
 ### 010 - `argon2-android-kernel-name`
@@ -103,11 +111,3 @@ In `android/Bootstrap/Makefile.shared`, gate the `NSSLIBS` definition and the `$
 ### 024 - `native-code-graphic-export`
 
 Add `filter_GraphicExportFilter_get_implementation` to `solenv/bin/native-code.py::core_constructor_list`. Without this entry, `cppuhelper::shlib` can't construct the UNO component backing the PNG / JPEG export filters under `DISABLE_DYNLOADING`, so `Document::saveAs` for any graphic format silently fails with `ERRCODE_IO_CANTWRITE`.
-
-### 025 - `nasm-ios-mach-o`
-
-Add `ios*` to the host-OS case that selects the NASM object format. Without this, an iOS x86_64 simulator host falls through to the `ELF ?` default and `NAFLAGS` ends up `-felf -DELF -DPIC`; the assembler then can't see NASM macros like `collect_args` in libjpeg-turbo's SIMD sources. iOS targets the same Mach-O / Mach-O64 formats as macOS, so this is just extending the existing branch.
-
-### 026 - `nss-ios-use-64`
-
-In `external/nss/ExternalProject_nss.mk`, include `iOS` in the OS filter that passes `USE_64=1 CPU_ARCH=x86_64` to NSS when `CPUNAME=X86_64`. Without `USE_64`, NSS picks the 32-bit code path in `lib/freebl/drbg.c` and `PR_STATIC_ASSERT(sizeof(size_t) <= 4)` fails the compile on a 64-bit iOS simulator host. The `AARCH64` branch on the next line is already OS-agnostic so iOS arm64 isn't affected.
