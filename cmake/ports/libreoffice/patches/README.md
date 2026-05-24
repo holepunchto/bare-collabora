@@ -28,6 +28,10 @@ Set `gb_Library_PLAINEXT_FOR_BUILD = .dylib` when `OS_FOR_BUILD == MACOSX`. Upst
 
 Build `ExternalPackage_fontconfig_data` on Android, iOS, and Linux too - not just Emscripten and macOS. Embedders on every supported platform need the fontconfig data shipped alongside the static bundle.
 
+### 027 - `conf-for-build-skip-system-libs`
+
+Extend the `CONF-FOR-BUILD` opt-out from system `libxml`, `fontconfig`, `freetype`, and `zlib` to also fire when `_os` is `Android` or `iOS`, not just `Emscripten`. The build-side configure was probing the host's `pkg-config` for `fontconfig >= 2.12.0` (and the others) even when the actual target was a self-contained cross-build that ships these libs internally; on a clean Ubuntu runner without `libfontconfig-dev` the probe fails. The `--with-main-module` defaulting stays Emscripten-only.
+
 ## iOS
 
 ### 004 - `allow-ios-simulator`

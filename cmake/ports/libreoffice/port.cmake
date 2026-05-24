@@ -353,6 +353,7 @@ declare_port(
     patches/024-native-code-graphic-export.patch
     patches/025-nasm-ios-mach-o.patch
     patches/026-nss-ios-use-64.patch
+    patches/027-conf-for-build-skip-system-libs.patch
 )
 
 add_library(libreoffice INTERFACE)

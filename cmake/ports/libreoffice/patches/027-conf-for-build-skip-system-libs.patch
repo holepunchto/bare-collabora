@@ -1,0 +1,15 @@
+diff --git a/configure.ac b/configure.ac
+--- a/configure.ac
++++ b/configure.ac
+@@ -6163,8 +6163,10 @@
+     test "$enable_wasm_strip" = "yes" && sub_conf_opts="$sub_conf_opts --enable-wasm-strip"
+     test "${with_system_lockfile+set}" = set && sub_conf_opts="$sub_conf_opts --with-system-lockfile=${with_system_lockfile}"
+     test "${enable_fuzzers}" = yes && sub_conf_opts="$sub_conf_opts --without-system-libxml"
+-    if test "$_os" = "Emscripten"; then
++    if test "$_os" = "Emscripten" -o "$_os" = "Android" -o "$_os" = "iOS"; then
+         sub_conf_opts="$sub_conf_opts --without-system-libxml --without-system-fontconfig --without-system-freetype --without-system-zlib"
++    fi
++    if test "$_os" = "Emscripten"; then
+         if test "${with_main_module+set}" = set; then
+             sub_conf_opts="$sub_conf_opts --with-main-module=${with_main_module}"
+         else
