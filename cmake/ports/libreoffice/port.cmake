@@ -57,7 +57,7 @@ foreach(prefix build host)
   if(arch MATCHES "arm64|aarch64")
     set(arch "aarch64")
   elseif(arch MATCHES "armv7-a|armeabi-v7a")
-    set(arch "armv7a")
+    set(arch "arm")
 
     if(platform MATCHES "android")
       set(platform "${platform}eabi")
