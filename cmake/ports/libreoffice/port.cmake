@@ -299,6 +299,7 @@ if(ANDROID)
 
     --without-export-validation
     --without-helppack-integration
+    --without-system-fontconfig
   )
 endif()
 
