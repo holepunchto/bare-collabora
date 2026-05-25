@@ -1,0 +1,12 @@
+diff --git a/configure.ac b/configure.ac
+--- a/configure.ac
++++ b/configure.ac
+@@ -10079,7 +10079,7 @@
+                     ;;
+                 esac
+               ;;
+-              darwin* | rhapsody* | nextstep* | openstep* | macos*)
++              darwin* | rhapsody* | nextstep* | openstep* | macos* | ios*)
+                 case "$host_cpu" in
+                   x86_64)
+                     objfmt='Mach-O64'

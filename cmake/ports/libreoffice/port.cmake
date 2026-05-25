@@ -57,7 +57,7 @@ foreach(prefix build host)
   if(arch MATCHES "arm64|aarch64")
     set(arch "aarch64")
   elseif(arch MATCHES "armv7-a|armeabi-v7a")
-    set(arch "armv7a")
+    set(arch "arm")
 
     if(platform MATCHES "android")
       set(platform "${platform}eabi")
@@ -330,7 +330,7 @@ declare_port(
     patches/001-uno-ini-env-override.patch
     patches/002-forward-cross-compiling-state.patch
     patches/003-skip-install.patch
-    patches/004-allow-ios-simulator-on-arm64.patch
+    patches/004-allow-ios-simulator.patch
     patches/005-curl-ios-disable-pipe2.patch
     patches/006-install-ios-static-libs.patch
     patches/007-ios-icu-data-from-env.patch
@@ -351,6 +351,9 @@ declare_port(
     patches/022-fontconfig-data-all-platforms.patch
     patches/023-android-makefile-shared-no-nss.patch
     patches/024-native-code-graphic-export.patch
+    patches/025-nasm-ios-mach-o.patch
+    patches/026-nss-ios-use-64.patch
+    patches/027-conf-for-build-skip-system-libs.patch
 )
 
 add_library(libreoffice INTERFACE)

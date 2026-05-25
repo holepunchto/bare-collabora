@@ -28,11 +28,15 @@ Set `gb_Library_PLAINEXT_FOR_BUILD = .dylib` when `OS_FOR_BUILD == MACOSX`. Upst
 
 Build `ExternalPackage_fontconfig_data` on Android, iOS, and Linux too - not just Emscripten and macOS. Embedders on every supported platform need the fontconfig data shipped alongside the static bundle.
 
+### 027 - `conf-for-build-skip-system-libs`
+
+Extend the `CONF-FOR-BUILD` opt-out from system `libxml`, `fontconfig`, `freetype`, and `zlib` to also fire when `_os` is `Android` or `iOS`, not just `Emscripten`. The build-side configure was probing the host's `pkg-config` for `fontconfig >= 2.12.0` (and the others) even when the actual target was a self-contained cross-build that ships these libs internally; on a clean Ubuntu runner without `libfontconfig-dev` the probe fails. The `--with-main-module` defaulting stays Emscripten-only.
+
 ## iOS
 
-### 004 - `allow-ios-simulator-on-arm64`
+### 004 - `allow-ios-simulator`
 
-Drop the `configure.ac` guard that errors out on `enable_ios_simulator=yes` for `arm64` hosts. The iOS simulator is fully supported on Apple Silicon Macs.
+Allow `enable_ios_simulator=yes` on both `arm64` and `x86_64` hosts so the simulator builds on Apple Silicon and Intel Macs. Upstream `configure.ac` only canonicalises `aarch64` for iOS and bakes `arm64` into `HOST_PLATFORM`, `host_cpu_for_clang`, `CPUNAME`, `RTL_ARCH`, and `PLATFORMID`; this patch adds the matching `x86_64` branches.
 
 ### 005 - `curl-ios-disable-pipe2`
 
@@ -45,6 +49,14 @@ Extend `ios/CustomTarget_iOS_setup.mk` to mirror every `.a` enumerated by `bin/l
 ### 007 - `ios-icu-data-from-env`
 
 On iOS, accept `LIBREOFFICE_ICU_DATA` as a path override for `ICU.dat`. Falls back to the existing `[bundlePath]/ICU.dat` lookup when unset. Useful when the embedder ships ICU data inside a framework resource directory instead of the main app bundle.
+
+### 025 - `nasm-ios-mach-o`
+
+Add `ios*` to the host-OS case that selects the NASM object format. Without this, an iOS x86_64 simulator host falls through to the `ELF ?` default and `NAFLAGS` ends up `-felf -DELF -DPIC`; the assembler then can't see NASM macros like `collect_args` in libjpeg-turbo's SIMD sources. iOS targets the same Mach-O / Mach-O64 formats as macOS, so this is just extending the existing branch.
+
+### 026 - `nss-ios-use-64`
+
+In `external/nss/ExternalProject_nss.mk`, include `iOS` in the OS filter that passes `USE_64=1 CPU_ARCH=x86_64` to NSS when `CPUNAME=X86_64`. Without `USE_64`, NSS picks the 32-bit code path in `lib/freebl/drbg.c` and `PR_STATIC_ASSERT(sizeof(size_t) <= 4)` fails the compile on a 64-bit iOS simulator host. The `AARCH64` branch on the next line is already OS-agnostic so iOS arm64 isn't affected.
 
 ## Android
 
