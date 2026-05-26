@@ -153,3 +153,7 @@ In `configure.ac`, replace `win_short_path_for_make` with `cygpath -sm` for `ATL
 ### 035 - `install-ooo-implibs`
 
 In `solenv/gbuild/platform/com_MSC_class.mk`, add `gb_Library__install_ilib` and call it from `gb_Library_Library_platform` for OOO-layer libraries. This copies each library's import `.lib` alongside its `.dll` in `instdir/program/`, making the `instdir/` tree self-contained for embedders. `RTVERLIBS` and `UNOVERLIBS` are unaffected — their import libraries already land in `instdir/sdk/lib/` via `gb_Library_get_ilib_target`.
+
+### 036 - `nss-msys2-abspath-windows`
+
+In `external/nss/nss.windows.patch`, replace `cygpath -m` with `cygpath -w` inside `pr_abspath` (NSPR's `config/rules.mk`) and `core_abspath` (NSS's `coreconf/rules.mk`). MSYS2's automatic argument conversion mishandles the mixed-form paths produced by `-m` (e.g. `D:/a/…`) when launching Windows-native `cl.exe`: it treats the leading `D:` as a drive prefix and re-converts the trailing `/a/…` to `a:/…`, yielding mangled paths like `D:a:/bare-collabora/…/now.c` that cl.exe can't open. Backslash paths from `-w` are recognised as already-Windows and passed through verbatim.

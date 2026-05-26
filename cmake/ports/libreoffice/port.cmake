@@ -414,6 +414,7 @@ declare_port(
     patches/033-openssl-msys2-perl-fallback.patch
     patches/034-atl-paths-windows-format.patch
     patches/035-install-ooo-implibs.patch
+    patches/036-nss-msys2-abspath-windows.patch
 )
 
 add_library(libreoffice INTERFACE)
