@@ -33,6 +33,10 @@
       "linux": {
         "arm64": "bare-collabora-linux-arm64",
         "x64": "bare-collabora-linux-x64"
+      },
+      "win32": {
+        "arm64": "bare-collabora-win32-arm64",
+        "x64": "bare-collabora-win32-x64"
       }
     }
   },

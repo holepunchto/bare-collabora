@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "description": "The Windows Intel 64-bit prebuilds for Collabora",
   "exports": {
-    "./package": "./package.json"
+    "./package": "./package.json",
+    ".": "./index.js"
+  },
+  "imports": {
+    "#assets": "./prebuilds/win32-x64/bare-collabora-win32-x64/assets"
   },
   "files": [
     "NOTICE",
+    "index.js",
     "prebuilds"
   ],
   "addon": true,

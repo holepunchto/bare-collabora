@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "description": "The Windows ARM 64-bit prebuilds for Collabora",
   "exports": {
-    "./package": "./package.json"
+    "./package": "./package.json",
+    ".": "./index.js"
+  },
+  "imports": {
+    "#assets": "./prebuilds/win32-arm64/bare-collabora-win32-arm64/assets"
   },
   "files": [
     "NOTICE",
+    "index.js",
     "prebuilds"
   ],
   "addon": true,

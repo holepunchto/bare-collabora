@@ -1,0 +1,16 @@
+diff --git a/Makefile.in b/Makefile.in
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -46,8 +46,12 @@ WSL:=@WSL@
+ # wsl needs unix-style path into windows realm, use long form to avoid confusing autogen.sh wrt
+ # builddir != srcdir when in actually it is just srcdir-in-shortform vs srcdir-in-longform
+ # for the same reason cd to the longform of BUILDDIR
++ifeq ($(WSL_DISTRO_NAME),)
++$(BUILDDIR)/config_host.mk : SRCDIR:=/$(shell cygpath -u $(SRCDIR))
++else
+ $(BUILDDIR)/config_host.mk : SRCDIR:=/$(shell $(WSL) wslpath -u $(shell cygpath -ml $(SRCDIR)))
+ endif
++endif
+ $(BUILDDIR)/config_host.mk : $(wildcard \
+ 		$(SRCDIR)/autogen.sh \
+ 		$(SRCDIR)/config_host.mk.in \

@@ -9,6 +9,7 @@ set(
 )
 
 set(args)
+set(env)
 
 set(build_platform ${CMAKE_HOST_SYSTEM_NAME})
 
@@ -50,6 +51,8 @@ foreach(prefix build host)
     set(platform "gnu-${platform}")
   elseif(platform MATCHES "android")
     set(platform "linux-${platform}")
+  elseif(platform MATCHES "windows")
+    set(platform "pc-cygwin")
   else()
     message(FATAL_ERROR "Unsupported platform '${platform}'")
   endif()
@@ -302,6 +305,54 @@ if(ANDROID)
   )
 endif()
 
+if(WIN32)
+  set(python3w "${CMAKE_CURRENT_LIST_DIR}/python3w.sh")
+
+  string(REGEX REPLACE "^([A-Z]):" "/\\1" python3w "${python3w}")
+
+  list(APPEND args
+    --enable-extension-integration
+    --enable-lto
+    --enable-mergelibs=more
+    --enable-mpl-subset
+    --enable-noto-font
+
+    --with-buildconfig-recorded
+    --with-docrepair-fonts
+    --with-galleries=no
+    --with-visual-studio=2022
+
+    --disable-breakpad
+    --disable-ccache
+    --disable-cli
+    --disable-community-flavor
+    --disable-ext-nlpsolver
+    --disable-ext-wiki-publisher
+    --disable-firebird-sdbc
+    --disable-lotuswordpro
+    --disable-online-update
+    --disable-online-update-mar
+    --disable-postgresql-sdbc
+    --disable-report-builder
+    --disable-scripting-beanshell
+    --disable-scripting-javascript
+    --disable-sdremote
+    --disable-sdremote-bluetooth
+    --disable-skia
+    --disable-windows-build-signing
+
+    --without-export-validation
+    --without-help
+    --without-java
+    --without-package-format
+    --without-templates
+
+    PYTHON_FOR_BUILD=${python3w}
+  )
+
+  list(APPEND env MSYSTEM=MSYS2)
+endif()
+
 set(bundle_url "https://git-bundles.libreoffice.org/core.bundle")
 
 set(bundle_path "${LIBREOFFICE_BUNDLE_PATH}")
@@ -326,6 +377,7 @@ declare_port(
   AUTOTOOLS
   ENTRYPOINT <SOURCE_DIR>/autogen.sh
   ARGS ${args}
+  ENV ${env}
   PATCHES
     patches/001-uno-ini-env-override.patch
     patches/002-forward-cross-compiling-state.patch
@@ -354,6 +406,14 @@ declare_port(
     patches/025-nasm-ios-mach-o.patch
     patches/026-nss-ios-use-64.patch
     patches/027-conf-for-build-skip-system-libs.patch
+    patches/028-msys2-use-cygpath.patch
+    patches/029-fix-include-symlink.patch
+    patches/030-quote-gnupatch.patch
+    patches/031-msys2-makefile-use-cygpath.patch
+    patches/032-icu-wnt-disable-extras.patch
+    patches/033-openssl-msys2-perl-fallback.patch
+    patches/034-atl-paths-windows-format.patch
+    patches/035-install-ooo-implibs.patch
 )
 
 add_library(libreoffice INTERFACE)
@@ -1284,6 +1344,277 @@ if(ANDROID)
   )
 endif()
 
+if(WIN32)
+  set(content_base instdir)
+
+  set(library_base ${content_base}/program)
+
+  set(asset_base ${content_base}/)
+
+  list(APPEND shared
+    mergedlo.dll
+  )
+
+  list(APPEND implibs
+    imerged.lib
+  )
+
+  list(APPEND modules
+    abplo.dll
+    acclo.dll
+    adolo.dll
+    affine_uno_uno.dll
+    analysislo.dll
+    animcorelo.dll
+    Argon2OptDll.dll
+    avmedialo.dll
+    basegfxlo.dll
+    biblo.dll
+    binaryurplo.dll
+    bootstraplo.dll
+    cached1.dll
+    calclo.dll
+    canvasfactorylo.dll
+    canvastoolslo.dll
+    chartcontrollerlo.dll
+    chartcorelo.dll
+    comphelper.dll
+    configmgrlo.dll
+    cppcanvaslo.dll
+    cppu3.dll
+    cppuhelper3MSC.dll
+    ctllo.dll
+    cuilo.dll
+    datelo.dll
+    dbahsqllo.dll
+    dbalo.dll
+    dbaselo.dll
+    dbaxmllo.dll
+    dbplo.dll
+    dbpool2.dll
+    dbtoolslo.dll
+    dbulo.dll
+    deployment.dll
+    deploymentgui.dll
+    deploymentmisclo.dll
+    directx9canvaslo.dll
+    docmodello.dll
+    drawinglayercorelo.dll
+    drawinglayerlo.dll
+    editenglo.dll
+    embobj.dll
+    emboleobj.dll
+    emfiolo.dll
+    emserlo.dll
+    epoxy.dll
+    etonyek.dll
+    evtattlo.dll
+    filelo.dll
+    filterconfiglo.dll
+    flashlo.dll
+    flatlo.dll
+    forlo.dll
+    foruilo.dll
+    fps.dll
+    fps_officelo.dll
+    freebl3.dll
+    frmlo.dll
+    fsstoragelo.dll
+    fwklo.dll
+    gdipluscanvaslo.dll
+    graphicfilterlo.dll
+    guesslanglo.dll
+    hwplo.dll
+    hyphenlo.dll
+    i18nlangtag.dll
+    i18npoollo.dll
+    i18nsearchlo.dll
+    i18nutil.dll
+    icglo.dll
+    icudt75.dll
+    icuin75.dll
+    icuuc75.dll
+    inprocserv.dll
+    inst_msu_msi.dll
+    instooofiltmsi.dll
+    introspectionlo.dll
+    invocadaptlo.dll
+    invocationlo.dll
+    iolo.dll
+    jumplistlo.dll
+    LanguageToollo.dll
+    lcms2.dll
+    libcrypto-3.dll
+    libcurl.dll
+    libexslt.dll
+    librdf.dll
+    libssl-3.dll
+    libxml2.dll
+    libxmlsec.dll
+    libxmlsec-mscng.dll
+    libxslt.dll
+    lnglo.dll
+    lnthlo.dll
+    localebe1lo.dll
+    localedata_en.dll
+    localedata_es.dll
+    localedata_euro.dll
+    localedata_others.dll
+    log_uno_uno.dll
+    loglo.dll
+    migrationoo2lo.dll
+    migrationoo3lo.dll
+    mozbootstraplo.dll
+    msca_uno.dll
+    msfilterlo.dll
+    mswordlo.dll
+    mtfrendererlo.dll
+    mwaw.dll
+    mysql_jdbclo.dll
+    namingservicelo.dll
+    nspr4.dll
+    nss3.dll
+    nssckbi.dll
+    nssdbm3.dll
+    nssutil3.dll
+    numbertextlo.dll
+    odbclo.dll
+    odfflatxmllo.dll
+    odfgen.dll
+    offacclo.dll
+    oglcanvaslo.dll
+    oleautobridgelo.dll
+    ooxlo.dll
+    orcus.dll
+    orcus-parser.dll
+    package2.dll
+    passwordcontainerlo.dll
+    pcrlo.dll
+    pdffilterlo.dll
+    pdfimportlo.dll
+    pdfiumlo.dll
+    plc4.dll
+    plds4.dll
+    PresentationMinimizerlo.dll
+    pricinglo.dll
+    proxyfaclo.dll
+    purpenvhelper3MSC.dll
+    qslnkmsi.dll
+    raptor2.dll
+    rasqal.dll
+    reflectionlo.dll
+    reg_dlls.dll
+    reg4allmsdoc.dll
+    regactivex.dll
+    reglo.dll
+    revenge.dll
+    rptlo.dll
+    rptuilo.dll
+    rptxmllo.dll
+    sal3.dll
+    sal_textenclo.dll
+    salhelper3MSC.dll
+    saxlo.dll
+    sblo.dll
+    scdlo.dll
+    scfiltlo.dll
+    sclo.dll
+    scnlo.dll
+    scuilo.dll
+    sdbc2.dll
+    sdbtlo.dll
+    sddlo.dll
+    sdlo.dll
+    sdqsmsi.dll
+    sduilo.dll
+    sellangmsi.dll
+    sfxlo.dll
+    shlxtmsi.dll
+    simplecanvaslo.dll
+    slideshowlo.dll
+    smdlo.dll
+    smime3.dll
+    smlo.dll
+    smplmaillo.dll
+    sn_tools.dll
+    so_activex.dll
+    sofficeapp.dll
+    softokn3.dll
+    solverlo.dll
+    sotlo.dll
+    spelllo.dll
+    spllo.dll
+    sqlite3.dll
+    srtrs1.dll
+    ssl3.dll
+    staroffice.dll
+    stocserviceslo.dll
+    storagefdlo.dll
+    storelo.dll
+    svgfilterlo.dll
+    svgiolo.dll
+    svllo.dll
+    svtlo.dll
+    svxcorelo.dll
+    svxlo.dll
+    sw_writerfilterlo.dll
+    swdlo.dll
+    swlo.dll
+    swuilo.dll
+    sysshlo.dll
+    t602filterlo.dll
+    textconversiondlgslo.dll
+    textfdlo.dll
+    tklo.dll
+    tllo.dll
+    UAccCOM.dll
+    ucb1.dll
+    ucbhelper.dll
+    ucpexpand1lo.dll
+    ucpextlo.dll
+    ucpfile1.dll
+    ucphier1.dll
+    ucpimagelo.dll
+    ucppkg1.dll
+    ucptdoc1lo.dll
+    unoidllo.dll
+    unopkgapp.dll
+    unordflo.dll
+    unoxmllo.dll
+    unsafe_uno_uno.dll
+    updatefeedlo.dll
+    utllo.dll
+    uuilo.dll
+    uuresolverlo.dll
+    vclcanvaslo.dll
+    vcllo.dll
+    vclplug_winlo.dll
+    winaccessibility.dll
+    wininetbe1lo.dll
+    WinUserInfoBelo.dll
+    wpd.dll
+    wpftcalclo.dll
+    wpftdrawlo.dll
+    wpftimpresslo.dll
+    wpftwriterlo.dll
+    wpg.dll
+    wps.dll
+    writerlo.dll
+    writerperfectlo.dll
+    xmlfalo.dll
+    xmlfdlo.dll
+    xmlreaderlo.dll
+    xmlscriptlo.dll
+    xmlsecurity.dll
+    xoflo.dll
+    xolo.dll
+    xsec_xmlsec.dll
+    xsltdlglo.dll
+    xsltfilterlo.dll
+    xstor.dll
+  )
+endif()
+
 set(libraries "${libreoffice_BINARY_DIR}/${library_base}")
 
 set(assets "${libreoffice_BINARY_DIR}/${asset_base}")
@@ -1292,17 +1623,23 @@ set(stamp "${libreoffice_STAMP_DIR}/${libreoffice}-relink")
 
 set(byproducts)
 
-foreach(library IN LISTS static shared modules)
+foreach(library IN LISTS static shared modules implibs)
   list(APPEND byproducts "${libraries}/${library}")
 endforeach()
 
 set(relink "${CMAKE_CURRENT_LIST_DIR}/relink.js")
 
+set(relink_args "${libreoffice_STAMP_DIR}/${libreoffice}-relink.args")
+
+string(REPLACE ";" "\n" relink_args_content "${byproducts}")
+
+file(WRITE "${relink_args}" "${relink_args_content}\n")
+
 add_custom_command(
   OUTPUT "${stamp}"
   DEPENDS ${relink} ${libreoffice}
   BYPRODUCTS ${byproducts}
-  COMMAND node ${relink} ${byproducts}
+  COMMAND node ${relink} "@${relink_args}"
   COMMAND "${CMAKE_COMMAND}" -E touch "${stamp}"
   VERBATIM
 )
@@ -1339,6 +1676,18 @@ foreach(library IN LISTS shared modules static)
     PROPERTIES
     IMPORTED_LOCATION "${libraries}/${library}"
   )
+
+  if(WIN32 AND ${library} IN_LIST shared)
+    list(POP_FRONT implibs implib)
+
+    set_target_properties(
+      ${target}
+      PROPERTIES
+      IMPORTED_IMPLIB "${libraries}/${implib}"
+    )
+
+    target_link_options(libreoffice INTERFACE /DELAYLOAD:${library})
+  endif()
 endforeach()
 
 set_target_properties(
