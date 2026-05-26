@@ -6,10 +6,7 @@ const { MachO, ELF } = require('bare-lief')
 let libraries = process.argv.slice(2)
 
 if (libraries.length === 1 && libraries[0].startsWith('@')) {
-  libraries = fs
-    .readFileSync(libraries[0].slice(1), 'utf8')
-    .split(/\r?\n/)
-    .filter(Boolean)
+  libraries = fs.readFileSync(libraries[0].slice(1), 'utf8').split(/\r?\n/).filter(Boolean)
 }
 
 for (const library of libraries) {
