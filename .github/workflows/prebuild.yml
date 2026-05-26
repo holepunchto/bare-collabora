@@ -65,7 +65,7 @@ jobs:
         if: ${{ matrix.platform == 'darwin' || matrix.platform == 'ios' }}
       - run: choco install msys2
         if: ${{ matrix.platform == 'win32' }}
-      - run: pacman --noconfirm -S make autoconf automake libtool gettext gettext-devel pkg-config gperf bison flex zip unzip patch
+      - run: pacman --noconfirm -S make autoconf automake libtool gettext gettext-devel pkgconf gperf bison flex zip unzip patch
         shell: C:\tools\msys64\usr\bin\bash.exe -e {0}
         env:
           PATH: C:\tools\msys64\usr\bin
