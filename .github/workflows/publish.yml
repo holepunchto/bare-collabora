@@ -73,6 +73,8 @@ jobs:
         env:
           PATH: C:\tools\msys64\usr\bin
         if: ${{ matrix.platform == 'win32' }}
+      - run: git config --global core.autocrlf false
+        if: ${{ matrix.platform == 'win32' }}
       - uses: holepunchto/actions/compile-prebuilds@v1
         with:
           platform: ${{ matrix.platform }}
