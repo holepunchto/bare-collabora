@@ -51,9 +51,13 @@ install(
   FILES_MATCHING
     # Configuration
     PATTERN "bootstraprc"
+    PATTERN "bootstrap.ini"
     PATTERN "fundamentalrc"
+    PATTERN "fundamental.ini"
     PATTERN "lounorc"
+    PATTERN "louno.ini"
     PATTERN "unorc"
+    PATTERN "uno.ini"
 
     # UNO services
     PATTERN "*.rdb"

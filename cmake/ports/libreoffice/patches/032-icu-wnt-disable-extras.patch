@@ -1,0 +1,16 @@
+diff --git a/external/icu/ExternalProject_icu.mk b/external/icu/ExternalProject_icu.mk
+index 4e05b4e0cfc0..3d93803d334d 100644
+--- a/external/icu/ExternalProject_icu.mk
++++ b/external/icu/ExternalProject_icu.mk
+@@ -29,9 +29,10 @@ $(call gb_ExternalProject_get_state_target,icu,build) :
+ 			$(gb_RUN_CONFIGURE) ./configure \
+ 				$(if $(MSVC_USE_DEBUG_RUNTIME),--enable-debug --disable-release) \
+ 				$(gb_CONFIGURE_PLATFORMS) \
++				--disable-extras \
+ 				$(if $(CROSS_COMPILING), \
+ 					--with-cross-build=$(WORKDIR_FOR_BUILD)/UnpackedTarball/icu/source \
+-					--disable-tools --disable-extras) \
++					--disable-tools) \
+ 		&& $(MAKE) $(if $(CROSS_COMPILING),DATASUBDIR=data) $(if $(verbose),VERBOSE=1) \
+ 	,source)
+ 	$(call gb_Trace_EndRange,icu,EXTERNAL)

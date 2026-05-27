@@ -1,0 +1,15 @@
+diff --git a/configure.ac b/configure.ac
+index c0ceb942b714..6ab7f8c5bd75 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -15897,8 +15897,8 @@ if test "$build_os" = "cygwin" -o "$build_os" = wsl -o -n "$WSL_ONLY_AS_HELPER";
+         ATL_INCLUDE="$WINDOWS_SDK_HOME/include/atl"
+     fi
+     ATL_LIB="$ATL_LIB/$WIN_HOST_ARCH"
+-    ATL_LIB=`win_short_path_for_make "$ATL_LIB"`
+-    ATL_INCLUDE=`win_short_path_for_make "$ATL_INCLUDE"`
++    ATL_LIB=`cygpath -sm "$ATL_LIB"`
++    ATL_INCLUDE=`cygpath -sm "$ATL_INCLUDE"`
+ fi
+ 
+ if test "$build_os" = "cygwin"; then

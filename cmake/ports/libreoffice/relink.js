@@ -3,7 +3,11 @@ const path = require('path')
 const { execFileSync } = require('child_process')
 const { MachO, ELF } = require('bare-lief')
 
-const libraries = process.argv.slice(2)
+let libraries = process.argv.slice(2)
+
+if (libraries.length === 1 && libraries[0].startsWith('@')) {
+  libraries = fs.readFileSync(libraries[0].slice(1), 'utf8').split(/\r?\n/).filter(Boolean)
+}
 
 for (const library of libraries) {
   if (/\.dylib(\.([0-9]+(\.[0-9]+)*))?$/.test(library)) {

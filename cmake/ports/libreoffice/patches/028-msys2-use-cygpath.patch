@@ -1,0 +1,24 @@
+diff --git a/solenv/gbuild/Helper.mk b/solenv/gbuild/Helper.mk
+index 0f54a81d2cb5..cd8a6da73a23 100644
+--- a/solenv/gbuild/Helper.mk
++++ b/solenv/gbuild/Helper.mk
+@@ -78,11 +78,19 @@ endef
+ 
+ ifneq ($(MSYSTEM),)
+ # paths to reach into windows realm from within wsl
++ifeq ($(WSL_DISTRO_NAME),)
++SRCDIR_WSL := $(shell cygpath -u $(SRCDIR))
++BUILDDIR_WSL := $(shell cygpath -u $(BUILDDIR))
++INSTDIR_WSL := $(shell cygpath -u $(INSTDIR))
++WORKDIR_WSL := $(shell cygpath -u $(WORKDIR))
++TARFILE_LOCATION_WSL := $(shell cygpath -u $(TARFILE_LOCATION))
++else
+ SRCDIR_WSL := $(shell $(WSL) wslpath -u $(SRCDIR))
+ BUILDDIR_WSL := $(shell $(WSL) wslpath -u $(BUILDDIR))
+ INSTDIR_WSL := $(shell $(WSL) wslpath -u $(INSTDIR))
+ WORKDIR_WSL := $(shell $(WSL) wslpath -u $(WORKDIR))
+ TARFILE_LOCATION_WSL := $(shell $(WSL) wslpath -u $(TARFILE_LOCATION))
++endif
+ 
+ define gb_Helper_wsl_path
+ $(subst $(TARFILE_LOCATION)/,$(TARFILE_LOCATION_WSL)/,$(subst $(SRCDIR)/,$(SRCDIR_WSL)/,$(subst $(BUILDDIR)/,$(BUILDDIR_WSL)/,$(subst $(INSTDIR)/,$(INSTDIR_WSL)/,$(subst $(WORKDIR)/,$(WORKDIR_WSL)/,$(1))))))

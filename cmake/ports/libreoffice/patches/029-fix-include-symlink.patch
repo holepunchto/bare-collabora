@@ -1,0 +1,11 @@
+diff --git a/configure.ac b/configure.ac
+--- a/configure.ac
++++ b/configure.ac
+@@ -16042,6 +16042,7 @@ CFLAGS=$my_original_CFLAGS
+ CXXFLAGS=$my_original_CXXFLAGS
+ CPPFLAGS=$my_original_CPPFLAGS
+
++AS_IF([test -d include -a ! -L include], [rm -rf include])
+ AC_CONFIG_LINKS([include:include])
+
+ if test -n "$WSL_ONLY_AS_HELPER"; then

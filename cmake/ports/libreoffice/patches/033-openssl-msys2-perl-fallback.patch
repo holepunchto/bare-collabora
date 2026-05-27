@@ -1,0 +1,13 @@
+diff --git a/external/openssl/ExternalProject_openssl.mk b/external/openssl/ExternalProject_openssl.mk
+index a31945fab0db..33f4e3e4592b 100644
+--- a/external/openssl/ExternalProject_openssl.mk
++++ b/external/openssl/ExternalProject_openssl.mk
+@@ -62,7 +62,7 @@ OPENSSL_PLATFORM := \
+ ifeq ($(COM),MSC)
+ $(eval $(call gb_ExternalProject_use_nmake,openssl,build))
+
+-$(call gb_ExternalProject_get_state_target,openssl,build): export PERL:=$(if $(MSYSTEM),$(STRAWBERRY_PERL),$(shell cygpath -m $(PERL)))
++$(call gb_ExternalProject_get_state_target,openssl,build): export PERL:=$(if $(MSYSTEM),$(if $(STRAWBERRY_PERL),$(STRAWBERRY_PERL),$(PERL)),$(shell cygpath -m $(PERL)))
+
+ # PARALLELISM_OPTION might be -j 16 -l 24, for jom ignore the load limit/only use the job limit
+ $(call gb_ExternalProject_get_state_target,openssl,build):

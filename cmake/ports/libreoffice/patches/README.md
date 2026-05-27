@@ -115,3 +115,45 @@ In `android/Bootstrap/Makefile.shared`, gate the `NSSLIBS` definition and the `$
 ### 024 - `native-code-graphic-export`
 
 Add `filter_GraphicExportFilter_get_implementation` to `solenv/bin/native-code.py::core_constructor_list`. Without this entry, `cppuhelper::shlib` can't construct the UNO component backing the PNG / JPEG export filters under `DISABLE_DYNLOADING`, so `Document::saveAs` for any graphic format silently fails with `ERRCODE_IO_CANTWRITE`.
+
+## Windows (MSYS2 + MSVC)
+
+The Windows build uses MSYS2 as a POSIX shell layer over MSVC toolchains. Several patches fix impedance mismatches between MSYS2's path conventions (`/c/…`) and the Windows-style paths (`C:/…`) that autoconf and LO's build system produce.
+
+A `python3w.sh` wrapper is installed alongside the patches and set as `PYTHON_FOR_BUILD`. It converts any `C:/…`-style argument to a POSIX path via `cygpath -u` before forwarding to `/usr/bin/python3`, because MSYS2's Python binary does not perform automatic path translation for script arguments.
+
+### 028 - `msys2-use-cygpath`
+
+In `solenv/gbuild/Helper.mk`, use `cygpath -u` instead of `wslpath -u` to populate the `SRCDIR_WSL` / `BUILDDIR_WSL` / … variables when running under MSYS2 (i.e. `MSYSTEM` is set but `WSL_DISTRO_NAME` is not). Upstream only handled the actual WSL case; this makes `gb_Helper_wsl_path` functional in a plain MSYS2 environment.
+
+### 029 - `fix-include-symlink`
+
+Before `AC_CONFIG_LINKS([include:include])` in `configure.ac`, remove the `include/` directory if it already exists as a real directory rather than a symlink. On Windows, git may check out the symlink target as a plain directory; autoconf's `AC_CONFIG_LINKS` then fails because it can't replace a directory with a symlink.
+
+### 030 - `quote-gnupatch`
+
+Quote `$(GNUPATCH)` in the `UnpackedTarball` patch-application loop in `solenv/gbuild/UnpackedTarball.mk`. On Windows, `GNUPATCH` resolves to a path containing spaces (e.g. `C:/Program Files/Git/usr/bin/patch.exe`); without quoting the shell splits it and the command is not found.
+
+### 031 - `msys2-makefile-use-cygpath`
+
+In `Makefile.in`, use `cygpath -u` to convert `SRCDIR` to a POSIX path when regenerating `config_host.mk` under MSYS2 (non-WSL). Upstream only handled WSL via `wslpath`; without this, `make` passes a Windows-style `SRCDIR` into the makefile infrastructure where MSYS2 expects a POSIX path.
+
+### 033 - `openssl-msys2-perl-fallback`
+
+In `external/openssl/ExternalProject_openssl.mk`, when `MSYSTEM` is set but `STRAWBERRY_PERL` is empty, fall back to the `PERL` detected by configure (MSYS2's own `perl.exe`) instead of expanding to an empty string. Upstream assumes that `MSYSTEM` implies a WSL environment where Strawberry Perl is required; under a native MSYS2 build without Strawberry Perl installed, the empty expansion drops the interpreter and leaves `Configure` as a bare (unfound) command.
+
+### 032 - `icu-wnt-disable-extras`
+
+Pass `--disable-extras` unconditionally to ICU's `./configure` on WNT. The `extra/uconv` subdirectory tries to generate a man page via `config.status` during the build, which fails in the MSYS2/MSVC environment. LibreOffice does not use any ICU extras, so skipping them is safe. Previously `--disable-extras` was only applied for cross-compiled WNT builds.
+
+### 034 - `atl-paths-windows-format`
+
+In `configure.ac`, replace `win_short_path_for_make` with `cygpath -sm` for `ATL_LIB` and `ATL_INCLUDE`. Under MSYS2, `win_short_path_for_make` falls through to its `else` branch which calls `cygpath -u`, producing POSIX-style paths (`/c/...`). MSVC (`cl.exe`) receives those as `-I/c/...` and cannot resolve them; the result is `atlbase.h: No such file or directory` even when ATL is installed. `cygpath -sm` always produces short Windows mixed-style paths (`C:/...`) which MSVC understands.
+
+### 035 - `install-ooo-implibs`
+
+In `solenv/gbuild/platform/com_MSC_class.mk`, add `gb_Library__install_ilib` and call it from `gb_Library_Library_platform` for OOO-layer libraries. This copies each library's import `.lib` alongside its `.dll` in `instdir/program/`, making the `instdir/` tree self-contained for embedders. `RTVERLIBS` and `UNOVERLIBS` are unaffected — their import libraries already land in `instdir/sdk/lib/` via `gb_Library_get_ilib_target`.
+
+### 036 - `nss-msys2-abspath-windows`
+
+In `external/nss/nss.windows.patch`, replace `cygpath -m` with `cygpath -w` inside `pr_abspath` (NSPR's `config/rules.mk`) and `core_abspath` (NSS's `coreconf/rules.mk`). MSYS2's automatic argument conversion mishandles the mixed-form paths produced by `-m` (e.g. `D:/a/…`) when launching Windows-native `cl.exe`: it treats the leading `D:` as a drive prefix and re-converts the trailing `/a/…` to `a:/…`, yielding mangled paths like `D:a:/bare-collabora/…/now.c` that cl.exe can't open. Backslash paths from `-w` are recognised as already-Windows and passed through verbatim.
