@@ -1466,7 +1466,6 @@ if(WIN32)
     migrationoo2lo.dll
     migrationoo3lo.dll
     mozbootstraplo.dll
-    msca_uno.dll
     msfilterlo.dll
     mswordlo.dll
     mtfrendererlo.dll
@@ -1614,6 +1613,12 @@ if(WIN32)
     xsltfilterlo.dll
     xstor.dll
   )
+
+  if(host_arch STREQUAL "aarch64")
+    list(APPEND modules msca_uno.dll)
+  else()
+    list(APPEND modules mscx_uno.dll)
+  endif()
 endif()
 
 set(libraries "${libreoffice_BINARY_DIR}/${library_base}")
