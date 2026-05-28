@@ -1,6 +1,6 @@
 {
   "name": "bare-collabora-win32-x64",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The Windows Intel 64-bit prebuilds for Collabora",
   "exports": {
     "./package": "./package.json",

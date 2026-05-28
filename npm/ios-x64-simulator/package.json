@@ -1,6 +1,6 @@
 {
   "name": "bare-collabora-ios-x64-simulator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The iOS Intel simulator 64-bit prebuilds for Collabora",
   "exports": {
     "./package": "./package.json",
