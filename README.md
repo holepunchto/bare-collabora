@@ -18,7 +18,7 @@ document.saveAs('/path/to/sample.pdf')
 
 ## API
 
-See the [full API reference](https://docs.pears.com/reference/bare/modules/bare-collabora).
+See the [`bare-collabora` reference](https://docs.pears.com/reference/bare/modules/bare-collabora).
 
 ## License
 
