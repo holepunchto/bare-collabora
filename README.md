@@ -16,43 +16,9 @@ const document = new Document('/path/to/sample.md')
 document.saveAs('/path/to/sample.pdf')
 ```
 
-<!-- bare-refgen:api start -->
-
 ## API
 
-### Document
-
-#### `new Document(url: string)`
-
-Loads the document at `url`, a local file path or `file:` URL pointing to a document in any format supported by Collabora.
-
-**Parameters**
-
-| Parameter | Type     | Default | Description                                                                                   |
-| --------- | -------- | ------- | --------------------------------------------------------------------------------------------- |
-| `url`     | `string` | —       | A local file path or `file:` URL pointing to a document in any format supported by Collabora. |
-
-**Throws**
-
-- The document at `url` cannot be opened.
-
-#### `saveAs(url: string, format?: string, options?: string): boolean`
-
-Saves the document to `url` in the given `format`. If `format` is omitted, it is inferred from the extension of `url`. `options` is a comma-separated string of filter options forwarded to Collabora; see the Collabora documentation for the filters available for a given format.
-
-**Parameters**
-
-| Parameter  | Type     | Default | Description                                                                                                                                      |
-| ---------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `url`      | `string` | —       | The destination path or `file:` URL to write to.                                                                                                 |
-| `format?`  | `string` | —       | The output format; when omitted, it is inferred from the extension of `url`.                                                                     |
-| `options?` | `string` | —       | A comma-separated string of filter options forwarded to Collabora. See the Collabora documentation for the filters available for a given format. |
-
-**Throws**
-
-- The document cannot be saved.
-
-<!-- bare-refgen:api end -->
+See the [full API reference](https://docs.pears.com/reference/bare/modules/bare-collabora).
 
 ## License
 
