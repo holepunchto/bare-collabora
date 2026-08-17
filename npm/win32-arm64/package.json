@@ -1,6 +1,12 @@
 {
   "name": "bare-collabora-win32-arm64",
   "version": "0.1.1",
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "arm64"
+  ],
   "description": "The Windows ARM 64-bit prebuilds for Collabora",
   "exports": {
     "./package": "./package.json",
