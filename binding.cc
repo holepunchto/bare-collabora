@@ -15,6 +15,12 @@ extern "C" {
 }
 #endif
 
+#if defined(_WIN32)
+#include <delayimp.h>
+#include <string.h>
+#include <windows.h>
+#endif
+
 using namespace lok;
 
 extern "C" LibreOfficeKit *
@@ -45,6 +51,69 @@ struct bare_collabora_document_t {
     delete handle;
   }
 };
+
+#if defined(_WIN32)
+
+// PE has no rpath, so a delay-loaded library and its dependencies are looked up by name in the
+// process search order — which a packaged app narrows to paths that are never ours. Loading from
+// this directory with LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR covers both.
+static std::wstring
+bare_collabora__library_directory(void) {
+  HMODULE self;
+
+  if (!GetModuleHandleExW(
+        GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+        reinterpret_cast<LPCWSTR>(&bare_collabora__library_directory),
+        &self
+      )) return {};
+
+  std::wstring path(MAX_PATH, L'\0');
+
+  for (;;) {
+    DWORD len = GetModuleFileNameW(self, path.data(), static_cast<DWORD>(path.size()));
+
+    if (len == 0) return {};
+
+    if (len < path.size()) {
+      path.resize(len);
+      break;
+    }
+
+    path.resize(path.size() * 2);
+  }
+
+  // <name>.bare sits next to <name>/, where the libraries are installed
+  size_t extension = path.rfind(L'.');
+
+  if (extension == std::wstring::npos) return {};
+
+  path.resize(extension);
+
+  return path;
+}
+
+static FARPROC WINAPI
+bare_collabora__on_delay_load(unsigned event, PDelayLoadInfo info) noexcept {
+  if (event != dliNotePreLoadLibrary) return nullptr;
+
+  static const std::wstring directory = bare_collabora__library_directory();
+
+  if (directory.empty()) return nullptr;
+
+  std::wstring library(directory);
+  library += L'\\';
+  library.append(info->szDll, info->szDll + strlen(info->szDll));
+
+  return reinterpret_cast<FARPROC>(LoadLibraryExW(
+    library.c_str(),
+    nullptr,
+    LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_DEFAULT_DIRS
+  ));
+}
+
+extern "C" const PfnDliHook __pfnDliNotifyHook2 = bare_collabora__on_delay_load;
+
+#endif
 
 static void
 bare_collabora__on_init(void) {
