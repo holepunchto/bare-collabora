@@ -165,6 +165,11 @@ Pass `-b .` to every `zip` invocation that writes an archive into a directory it
 Seen twice on Windows in the autocorrect target, with a different language each time - `acor_ru-RU.dat` out of 37 targets, `acor_vro-EE.dat` out of 49 - which is what points at contention rather than anything specific to a document.
 
 Two callers with the same shape are deliberately left alone. `Extension.mk` builds `.oxt` packages, which this port never builds (`--disable-extensions`). `HelpTarget.mk` is not affected at all: it writes `$(HELP_MODULE).jar` relative to the directory it changes into, so its temporary file is already private.
-### 037 - `visual-studio-2026`
+
+### 038 - `visual-studio-2026`
 
 Teach `configure.ac` about Visual Studio 2026: map the `2026` argument of `--with-visual-studio` to version 18, give 18.x its `vcyear` / `vctoolset` (`v145`), accept the same Windows SDKs as 17.x, and look for `clang-cl.exe` under the architecture subdirectory it moved to in Visual Studio 2026 18.7.0. Backport of upstream `d2def868cb3a`, which `distro/collabora/co-26.04` already carries, and `132bd1cb9baf`, which is on master only.
+
+### 039 - `visual-studio-2026-crt`
+
+`find_msvc_x64_dlls` derives its default path as `Microsoft.VC${VCVER}.CRT` and only corrects it for the versions its `case` names, so Visual Studio 2026 (`VCVER` of `18.0`) keeps a path that does not exist and configure fails with `missing msvcp140.dll`. Add an arm resolving the 2026 redist directory, `redist/MSVC/<version>/x64/Microsoft.VC145.CRT`. Unlike 038 this is not a backport: master deletes the check outright rather than teaching it new versions, and the variables it feeds are consumed by the installer packaging, so removing it is not a small lift on this branch. `with_redist` is left empty for `VC145.CRT`, which is harmless here - the port configures `--without-package-format`, and the only consumer is the `msi` branch.

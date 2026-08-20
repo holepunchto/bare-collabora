@@ -399,7 +399,8 @@ declare_port(
     patches/035-install-ooo-implibs.patch
     patches/036-nss-msys2-abspath-windows.patch
     patches/037-zip-temp-dir.patch
-    patches/037-visual-studio-2026.patch
+    patches/038-visual-studio-2026.patch
+    patches/039-visual-studio-2026-crt.patch
 )
 
 add_library(libreoffice INTERFACE)
