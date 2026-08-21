@@ -1,0 +1,88 @@
+diff --git a/extras/CustomTarget_autocorr.mk b/extras/CustomTarget_autocorr.mk
+index 6fcbc2c66481..698cf7f1c30d 100644
+--- a/extras/CustomTarget_autocorr.mk
++++ b/extras/CustomTarget_autocorr.mk
+@@ -280,8 +280,8 @@ $(gb_CustomTarget_workdir)/extras/source/autocorr/acor_%.dat : \
+ 	$(call gb_Helper_abbreviate_dirs,\
+ 		cd $(dir $<) && \
+ 		$(autocorr_PYTHONCOMMAND) $(SRCDIR)/bin/check-autocorr.py DocumentList.xml && \
+-		$(call gb_Helper_wsl_path,$(WSL) zip -q0X --filesync --must-match $@ mimetype) && \
+-		$(call gb_Helper_wsl_path,$(WSL) zip -qrX --must-match $@ $(call extras_AUTOCORR_XMLFILES_LANG,$(call extras_AUTOCORR_SHORTLANG,$*))) \
++		$(call gb_Helper_wsl_path,$(WSL) zip -q0X --filesync --must-match -b . $@ mimetype) && \
++		$(call gb_Helper_wsl_path,$(WSL) zip -qrX --must-match -b . $@ $(call extras_AUTOCORR_XMLFILES_LANG,$(call extras_AUTOCORR_SHORTLANG,$*))) \
+ 	)
+ 	$(call gb_Trace_EndRange,autocorr/acor_$*.dat,ZIP)
+ 
+diff --git a/extras/CustomTarget_autotextshare.mk b/extras/CustomTarget_autotextshare.mk
+index 0c79da5da6ed..12e64eb1d36f 100644
+--- a/extras/CustomTarget_autotextshare.mk
++++ b/extras/CustomTarget_autotextshare.mk
+@@ -3668,8 +3668,8 @@ $(gb_CustomTarget_workdir)/extras/source/autotext/share/%.bau : \
+ 	$(call gb_Helper_abbreviate_dirs,\
+ 		cd $(dir $<) && \
+ 		$(call gb_Helper_wsl_path,\
+-		$(WSL) zip -q0X --filesync --must-match $@ mimetype && \
+-		$(WSL) zip -qrX --must-match $@ $(call extras_AUTOTEXTSHARE_XMLFILES_RELATIVE,$*)) \
++		$(WSL) zip -q0X --filesync --must-match -b . $@ mimetype && \
++		$(WSL) zip -qrX --must-match -b . $@ $(call extras_AUTOTEXTSHARE_XMLFILES_RELATIVE,$*)) \
+ 	)
+ 	$(call gb_Trace_EndRange,autotext/$*.bau,ZIP)
+ 
+diff --git a/extras/CustomTarget_autotextuser.mk b/extras/CustomTarget_autotextuser.mk
+index f81fb07250ad..83841ec1bb00 100644
+--- a/extras/CustomTarget_autotextuser.mk
++++ b/extras/CustomTarget_autotextuser.mk
+@@ -42,8 +42,8 @@ $(gb_CustomTarget_workdir)/extras/source/autotext/user/%.bau : \
+ 	$(call gb_Helper_abbreviate_dirs,\
+ 	cd $(dir $<) && \
+ 	$(call gb_Helper_wsl_path,\
+-		$(WSL) zip -q0X --filesync --must-match $@ mimetype && \
+-		$(WSL) zip -qrX --must-match $@ $(call extras_AUTOTEXTUSER_XMLFILES_RELATIVE,$*)) \
++		$(WSL) zip -q0X --filesync --must-match -b . $@ mimetype && \
++		$(WSL) zip -qrX --must-match -b . $@ $(call extras_AUTOTEXTUSER_XMLFILES_RELATIVE,$*)) \
+ 	)
+ 	$(call gb_Trace_EndRange,autotext/user/$*.bau,ZIP)
+ 
+diff --git a/extras/CustomTarget_templates.mk b/extras/CustomTarget_templates.mk
+index a0661e96b356..2a1e92fde194 100644
+--- a/extras/CustomTarget_templates.mk
++++ b/extras/CustomTarget_templates.mk
+@@ -16,8 +16,8 @@ $(call gb_Output_announce,$(subst $(gb_CustomTarget_workdir)/extras/source/,,$@)
+ $(call gb_Trace_StartRange,$(subst $(gb_CustomTarget_workdir)/extras/source/,,$@),ZIP)
+ cd $(dir $<) && \
+ $(call gb_Helper_wsl_path,\
+-$(WSL) zip -q0X --filesync --must-match $@ mimetype && \
+-$(WSL) zip -qrX --must-match $@ $(subst $(dir $<),,$^)) -x mimetype
++$(WSL) zip -q0X --filesync --must-match -b . $@ mimetype && \
++$(WSL) zip -qrX --must-match -b . $@ $(subst $(dir $<),,$^)) -x mimetype
+ $(call gb_Trace_EndRange,$(subst $(gb_CustomTarget_workdir)/extras/source/,,$@),ZIP)
+ endef
+ 
+diff --git a/filter/CustomTarget_docbook.mk b/filter/CustomTarget_docbook.mk
+index 4221a5fefcc1..066ccc2b5f9a 100644
+--- a/filter/CustomTarget_docbook.mk
++++ b/filter/CustomTarget_docbook.mk
+@@ -21,8 +21,8 @@ $(call gb_Output_announce,$(subst $(gb_CustomTarget_workdir)/filter/source/docbo
+ $(call gb_Trace_StartRange,$(subst $(gb_CustomTarget_workdir)/filter/source/docbook/,,$@),ZIP)
+ cd $(dir $<) && \
+ $(call gb_Helper_wsl_path,\
+-$(WSL) zip -q0X --filesync --must-match $@ mimetype && \
+-$(WSL) zip -qrX --must-match $@ $(subst $(dir $<),,$^)) -x mimetype
++$(WSL) zip -q0X --filesync --must-match -b . $@ mimetype && \
++$(WSL) zip -qrX --must-match -b . $@ $(subst $(dir $<),,$^)) -x mimetype
+ $(call gb_Trace_EndRange,$(subst $(gb_CustomTarget_workdir)/filter/source/docbook/,,$@),ZIP)
+ endef
+ 
+diff --git a/solenv/gbuild/Zip.mk b/solenv/gbuild/Zip.mk
+index 42a04783c054..6e38f60b4662 100644
+--- a/solenv/gbuild/Zip.mk
++++ b/solenv/gbuild/Zip.mk
+@@ -50,7 +50,7 @@ $(call gb_Zip_get_target,%) :
+                         $(FILES)) && \
+ 			cd $(LOCATION) && \
+ 			cat $${RESPONSEFILE} | tr "[:space:]" "\n" | \
+-				$(call gb_Helper_wsl_path,$(WSL) $(gb_Zip_ZIPCOMMAND) -@rX --filesync --must-match \
++				$(call gb_Helper_wsl_path,$(WSL) $(gb_Zip_ZIPCOMMAND) -@rX --filesync --must-match -b . \
+ 					$(call gb_Zip_get_target,$*)) && \
+ 			rm -f $${RESPONSEFILE} && \
+ 			touch $@\

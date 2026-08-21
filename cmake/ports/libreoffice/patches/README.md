@@ -157,3 +157,11 @@ In `solenv/gbuild/platform/com_MSC_class.mk`, add `gb_Library__install_ilib` and
 ### 036 - `nss-msys2-abspath-windows`
 
 In `external/nss/nss.windows.patch`, replace `cygpath -m` with `cygpath -w` inside `pr_abspath` (NSPR's `config/rules.mk`) and `core_abspath` (NSS's `coreconf/rules.mk`). MSYS2's automatic argument conversion mishandles the mixed-form paths produced by `-m` (e.g. `D:/a/…`) when launching Windows-native `cl.exe`: it treats the leading `D:` as a drive prefix and re-converts the trailing `/a/…` to `a:/…`, yielding mangled paths like `D:a:/bare-collabora/…/now.c` that cl.exe can't open. Backslash paths from `-w` are recognised as already-Windows and passed through verbatim.
+
+### 037 - `zip-temp-dir`
+
+Pass `-b .` to every `zip` invocation that writes an archive into a directory it shares with concurrent siblings: autocorrect, both autotext sets, templates, the docbook filter, and the generic `Zip` class. `zip` creates its temporary archive beside its target before renaming, so with dozens running at once two can pick the same temporary name; the loser's file is renamed away underneath it and the next open fails with `zip I/O error: No such file or directory` / `Could not create output file`. Each of these recipes already changes into a per-archive directory, so `-b .` gives every invocation a private location. Passing `.` rather than a path keeps it clear of the MSYS2 path translation the other Windows patches deal with.
+
+Seen twice on Windows in the autocorrect target, with a different language each time - `acor_ru-RU.dat` out of 37 targets, `acor_vro-EE.dat` out of 49 - which is what points at contention rather than anything specific to a document.
+
+Two callers with the same shape are deliberately left alone. `Extension.mk` builds `.oxt` packages, which this port never builds (`--disable-extensions`). `HelpTarget.mk` is not affected at all: it writes `$(HELP_MODULE).jar` relative to the directory it changes into, so its temporary file is already private.
