@@ -24,5 +24,11 @@
   "bugs": {
     "url": "https://github.com/holepunchto/bare-collabora/issues"
   },
-  "homepage": "https://github.com/holepunchto/bare-collabora"
+  "homepage": "https://github.com/holepunchto/bare-collabora",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm64"
+  ]
 }

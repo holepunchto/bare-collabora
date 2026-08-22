@@ -25,6 +25,12 @@
     "url": "https://github.com/holepunchto/bare-collabora/issues"
   },
   "homepage": "https://github.com/holepunchto/bare-collabora",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
   "dependencies": {
     "bare-env": "^3.0.0",
     "bare-path": "^3.0.0",
