@@ -173,3 +173,14 @@ Teach `configure.ac` about Visual Studio 2026: map the `2026` argument of `--wit
 ### 039 - `visual-studio-2026-crt`
 
 `find_msvc_x64_dlls` derives its default path as `Microsoft.VC${VCVER}.CRT` and only corrects it for the versions its `case` names, so Visual Studio 2026 (`VCVER` of `18.0`) keeps a path that does not exist and configure fails with `missing msvcp140.dll`. Add an arm resolving the 2026 redist directory, `redist/MSVC/<version>/x64/Microsoft.VC145.CRT`. Unlike 038 this is not a backport: master deletes the check outright rather than teaching it new versions, and the variables it feeds are consumed by the installer packaging, so removing it is not a small lift on this branch. `with_redist` is left empty for `VC145.CRT`, which is harmless here - the port configures `--without-package-format`, and the only consumer is the `msi` branch.
+
+### 040 - `accpara-inline-conversion`
+
+Define `SwAccessibleParagraph`'s conversion to `XAccessibleText *` in the class body rather than out of line. The class derives from nine UNO interfaces, several of which derive from `XAccessibleText`, so the conversion exists to name one path through the hierarchy. Visual Studio 2026's compiler rejects the out-of-line definition:
+
+```
+accpara.hxx(395): error C2738: 'operator com::sun::star::accessibility::XAccessibleText *':
+    is ambiguous or is not a member of 'SwAccessibleParagraph'
+```
+
+Upstream solved this differently, by moving the class onto `cppu::ImplInheritanceHelper` so the hierarchy is linear and no conversion is needed (`distro/collabora/co-26.04` and master). That is an inheritance refactor rather than a patch, so it is not backportable here; defining the operator in the class body keeps the same disambiguation without the out-of-line name lookup the compiler objects to.
