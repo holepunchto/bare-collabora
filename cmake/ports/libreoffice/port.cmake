@@ -353,55 +353,73 @@ if(WIN32)
   list(APPEND env MSYSTEM=MSYS2)
 endif()
 
-declare_port(
-  "github:LibreOffice/core#distro/collabora/co-25.04"
-  libreoffice
-  AUTOTOOLS
-  SUBMODULES OFF
-  ENTRYPOINT <SOURCE_DIR>/autogen.sh
-  ARGS ${args}
-  ENV ${env}
-  PATCHES
-    patches/001-uno-ini-env-override.patch
-    patches/002-forward-cross-compiling-state.patch
-    patches/003-skip-install.patch
-    patches/004-allow-ios-simulator.patch
-    patches/005-curl-ios-disable-pipe2.patch
-    patches/006-install-ios-static-libs.patch
-    patches/007-ios-icu-data-from-env.patch
-    patches/008-unzip-restore-permissions.patch
-    patches/009-build-side-lib-ext.patch
-    patches/010-argon2-android-kernel-name.patch
-    patches/011-argon2-use-make-ar.patch
-    patches/012-pixman-android-with-pic.patch
-    patches/013-install-android-static-libs.patch
-    patches/014-lo-all-static-libs-android-nss.patch
-    patches/015-libxml2-android-with-pic.patch
-    patches/016-libxslt-android-with-pic.patch
-    patches/017-android-app-data-dir-fallback.patch
-    patches/018-osl-dladdr-without-dlapi.patch
-    patches/019-android-null-assetmgr-noent.patch
-    patches/020-resmgr-app-data-dir-fallback.patch
-    patches/021-android-null-javavm-guards.patch
-    patches/022-fontconfig-data-all-platforms.patch
-    patches/023-android-makefile-shared-no-nss.patch
-    patches/024-native-code-graphic-export.patch
-    patches/025-nasm-ios-mach-o.patch
-    patches/026-nss-ios-use-64.patch
-    patches/027-conf-for-build-skip-system-libs.patch
-    patches/028-msys2-use-cygpath.patch
-    patches/029-fix-include-symlink.patch
-    patches/030-quote-gnupatch.patch
-    patches/031-msys2-makefile-use-cygpath.patch
-    patches/032-icu-wnt-disable-extras.patch
-    patches/033-openssl-msys2-perl-fallback.patch
-    patches/034-atl-paths-windows-format.patch
-    patches/035-install-ooo-implibs.patch
-    patches/036-nss-msys2-abspath-windows.patch
-    patches/037-zip-temp-dir.patch
-    patches/038-visual-studio-2026.patch
-    patches/039-visual-studio-2026-crt.patch
-)
+if(LIBREOFFICE_PREBUILT)
+  # A prebuilt archive mirrors the two trees a source build leaves behind, so
+  # everything below reads it unchanged. Its libraries are already relinked.
+  set(libreoffice libreoffice_prebuilt)
+
+  set(
+    libreoffice_SOURCE_DIR "${LIBREOFFICE_PREBUILT}/source"
+    CACHE INTERNAL "The source directory of the libreoffice port"
+  )
+
+  set(
+    libreoffice_BINARY_DIR "${LIBREOFFICE_PREBUILT}/binary"
+    CACHE INTERNAL "The binary directory of the libreoffice port"
+  )
+
+  add_custom_target(${libreoffice})
+else()
+  declare_port(
+    "github:LibreOffice/core#distro/collabora/co-25.04"
+    libreoffice
+    AUTOTOOLS
+    SUBMODULES OFF
+    ENTRYPOINT <SOURCE_DIR>/autogen.sh
+    ARGS ${args}
+    ENV ${env}
+    PATCHES
+      patches/001-uno-ini-env-override.patch
+      patches/002-forward-cross-compiling-state.patch
+      patches/003-skip-install.patch
+      patches/004-allow-ios-simulator.patch
+      patches/005-curl-ios-disable-pipe2.patch
+      patches/006-install-ios-static-libs.patch
+      patches/007-ios-icu-data-from-env.patch
+      patches/008-unzip-restore-permissions.patch
+      patches/009-build-side-lib-ext.patch
+      patches/010-argon2-android-kernel-name.patch
+      patches/011-argon2-use-make-ar.patch
+      patches/012-pixman-android-with-pic.patch
+      patches/013-install-android-static-libs.patch
+      patches/014-lo-all-static-libs-android-nss.patch
+      patches/015-libxml2-android-with-pic.patch
+      patches/016-libxslt-android-with-pic.patch
+      patches/017-android-app-data-dir-fallback.patch
+      patches/018-osl-dladdr-without-dlapi.patch
+      patches/019-android-null-assetmgr-noent.patch
+      patches/020-resmgr-app-data-dir-fallback.patch
+      patches/021-android-null-javavm-guards.patch
+      patches/022-fontconfig-data-all-platforms.patch
+      patches/023-android-makefile-shared-no-nss.patch
+      patches/024-native-code-graphic-export.patch
+      patches/025-nasm-ios-mach-o.patch
+      patches/026-nss-ios-use-64.patch
+      patches/027-conf-for-build-skip-system-libs.patch
+      patches/028-msys2-use-cygpath.patch
+      patches/029-fix-include-symlink.patch
+      patches/030-quote-gnupatch.patch
+      patches/031-msys2-makefile-use-cygpath.patch
+      patches/032-icu-wnt-disable-extras.patch
+      patches/033-openssl-msys2-perl-fallback.patch
+      patches/034-atl-paths-windows-format.patch
+      patches/035-install-ooo-implibs.patch
+      patches/036-nss-msys2-abspath-windows.patch
+      patches/037-zip-temp-dir.patch
+      patches/038-visual-studio-2026.patch
+      patches/039-visual-studio-2026-crt.patch
+  )
+endif()
 
 add_library(libreoffice INTERFACE)
 
@@ -1611,32 +1629,37 @@ set(libraries "${libreoffice_BINARY_DIR}/${library_base}")
 
 set(assets "${libreoffice_BINARY_DIR}/${asset_base}")
 
-set(stamp "${libreoffice_STAMP_DIR}/${libreoffice}-relink")
+if(LIBREOFFICE_PREBUILT)
+  # An archive ships relinked, so there is nothing to rewrite here.
+  add_custom_target(libreoffice_relink)
+else()
+  set(stamp "${libreoffice_STAMP_DIR}/${libreoffice}-relink")
 
-set(byproducts)
+  set(byproducts)
 
-foreach(library IN LISTS static shared modules implibs)
-  list(APPEND byproducts "${libraries}/${library}")
-endforeach()
+  foreach(library IN LISTS static shared modules implibs)
+    list(APPEND byproducts "${libraries}/${library}")
+  endforeach()
 
-set(relink "${CMAKE_CURRENT_LIST_DIR}/relink.js")
+  set(relink "${CMAKE_CURRENT_LIST_DIR}/relink.js")
 
-set(relink_args "${libreoffice_STAMP_DIR}/${libreoffice}-relink.args")
+  set(relink_args "${libreoffice_STAMP_DIR}/${libreoffice}-relink.args")
 
-string(REPLACE ";" "\n" relink_args_content "${byproducts}")
+  string(REPLACE ";" "\n" relink_args_content "${byproducts}")
 
-file(WRITE "${relink_args}" "${relink_args_content}\n")
+  file(WRITE "${relink_args}" "${relink_args_content}\n")
 
-add_custom_command(
-  OUTPUT "${stamp}"
-  DEPENDS ${relink} ${libreoffice}
-  BYPRODUCTS ${byproducts}
-  COMMAND node ${relink} "@${relink_args}"
-  COMMAND "${CMAKE_COMMAND}" -E touch "${stamp}"
-  VERBATIM
-)
+  add_custom_command(
+    OUTPUT "${stamp}"
+    DEPENDS ${relink} ${libreoffice}
+    BYPRODUCTS ${byproducts}
+    COMMAND node ${relink} "@${relink_args}"
+    COMMAND "${CMAKE_COMMAND}" -E touch "${stamp}"
+    VERBATIM
+  )
 
-add_custom_target(libreoffice_relink DEPENDS "${stamp}" ${byproducts})
+  add_custom_target(libreoffice_relink DEPENDS "${stamp}" ${byproducts})
+endif()
 
 add_dependencies(libreoffice libreoffice_relink)
 
