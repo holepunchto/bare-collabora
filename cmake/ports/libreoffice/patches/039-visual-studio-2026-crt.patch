@@ -1,0 +1,19 @@
+diff --git a/configure.ac b/configure.ac
+index 28d9f43b5365..1e3bfcad5059 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -7208,6 +7208,14 @@ find_msvc_x64_dlls()
+             done
+         done
+         ;;
++    18.0)
++        for l in `ls -1 $VC_PRODUCT_DIR/redist/MSVC/`; do
++            echo "$as_me:$LINENO: testing $VC_PRODUCT_DIR/redist/MSVC/$l/x64/Microsoft.VC145.CRT" >&5
++            if test -d "$VC_PRODUCT_DIR/redist/MSVC/$l/x64/Microsoft.VC145.CRT"; then
++                msvcdllpath="$VC_PRODUCT_DIR/redist/MSVC/$l/x64/Microsoft.VC145.CRT"
++            fi
++        done
++        ;;
+     esac
+     AC_MSG_RESULT([$msvcdllpath])
+     AC_MSG_CHECKING([for MSVC x64 DLLs])

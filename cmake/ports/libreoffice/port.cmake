@@ -1,5 +1,13 @@
 include_guard(GLOBAL)
 
+set(
+  LIBREOFFICE_VISUAL_STUDIO
+  2022
+  CACHE
+  STRING
+  "Visual Studio version to configure LibreOffice against"
+)
+
 set(args)
 set(env)
 
@@ -312,7 +320,7 @@ if(WIN32)
     --with-buildconfig-recorded
     --with-docrepair-fonts
     --with-galleries=no
-    --with-visual-studio=2022
+    --with-visual-studio=${LIBREOFFICE_VISUAL_STUDIO}
 
     --disable-breakpad
     --disable-ccache
@@ -391,6 +399,8 @@ declare_port(
     patches/035-install-ooo-implibs.patch
     patches/036-nss-msys2-abspath-windows.patch
     patches/037-zip-temp-dir.patch
+    patches/038-visual-studio-2026.patch
+    patches/039-visual-studio-2026-crt.patch
 )
 
 add_library(libreoffice INTERFACE)

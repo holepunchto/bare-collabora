@@ -1,0 +1,42 @@
+diff --git a/configure.ac b/configure.ac
+index 5f585963bdd5..28d9f43b5365 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -4328,6 +4328,8 @@ map_vs_year_to_version()
+         vsversion=17;;
+     2022preview)
+         vsversion=17.13;;
++    2026)
++        vsversion=18;;
+     *)
+         AC_MSG_ERROR([Assertion failure - invalid argument "$1" to map_vs_year_to_version()]);;
+     esac
+@@ -4457,6 +4459,10 @@ find_msvc()
+             vcyear=2022
+             vctoolset=v143
+             ;;
++        18.0)
++            vcyear=2026
++            vctoolset=v145
++            ;;
+         esac
+         vcbuildnumber=`ls $vctest/VC/Tools/MSVC -A1r | head -1`
+ 
+@@ -4624,7 +4630,7 @@ if test "$_os" = "WINNT"; then
+         # are always "better", we list them in reverse chronological order.
+ 
+         case "$vcnumwithdot" in
+-        16.0 | 17.0 | 17.13)
++        16.0 | 17.0 | 17.13 | 18.0)
+             WINDOWS_SDK_ACCEPTABLE_VERSIONS="10.0 8.1A 8.1 8.0"
+             ;;
+         esac
+@@ -13021,6 +13027,8 @@ if test \( "$ENABLE_SKIA" = TRUE -o "$ENABLE_PDFIUM" = TRUE \) -a "$COM_IS_CLANG
+             AC_MSG_CHECKING([for clang-cl])
+             if test -x "$VC_PRODUCT_DIR/Tools/Llvm/bin/clang-cl.exe"; then
+                 LO_CLANG_CC=`win_short_path_for_make "$VC_PRODUCT_DIR/Tools/Llvm/bin/clang-cl.exe"`
++            elif test -x "$VC_PRODUCT_DIR/Tools/Llvm/$WIN_BUILD_ARCH/bin/clang-cl.exe"; then
++                LO_CLANG_CC=`win_short_path_for_make "$VC_PRODUCT_DIR/Tools/Llvm/$WIN_BUILD_ARCH/bin/clang-cl.exe"`
+             elif test -n "$PROGRAMFILES" -a -x "$(cygpath -u "$PROGRAMFILES/LLVM/bin/clang-cl.exe")"; then
+                 LO_CLANG_CC=`win_short_path_for_make "$PROGRAMFILES/LLVM/bin/clang-cl.exe"`
+             elif test -x "$(cygpath -u "c:/Program Files/LLVM/bin/clang-cl.exe")"; then
