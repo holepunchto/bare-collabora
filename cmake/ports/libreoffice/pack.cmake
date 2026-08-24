@@ -4,6 +4,12 @@
 # LIBRARIES is a file listing one absolute library path per line, the same shape
 # relink.js takes, so the list stays in one place.
 
+include("${CMAKE_CURRENT_LIST_DIR}/key.cmake")
+
+libreoffice_cache_key("${SOURCE_DIR}" "${CMAKE_CURRENT_LIST_DIR}" "${KEY_INPUTS}" key)
+
+set(OUTPUT "${ARCHIVE_DIR}/libreoffice-${ARCHIVE_TARGET}-${key}.tar.xz")
+
 file(READ "${LIBRARIES}" libraries_content)
 
 string(REGEX REPLACE "\r?\n" ";" libraries "${libraries_content}")

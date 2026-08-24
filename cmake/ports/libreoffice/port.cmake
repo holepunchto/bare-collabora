@@ -1669,7 +1669,24 @@ else()
   # is named for the target the rest of the project uses.
   bare_target(archive_target)
 
-  set(archive "${CMAKE_BINARY_DIR}/libreoffice-${archive_target}.tar.xz")
+  # What the key needs that only configure knows. Paths are relative to
+  # placeholders so the key does not depend on where the checkout lives.
+  set(key_inputs "${libreoffice_STAMP_DIR}/${libreoffice}-key.args")
+
+  set(key_content "")
+
+  foreach(entry IN LISTS args env)
+    string(REPLACE "${CMAKE_SOURCE_DIR}" "<source>" entry "${entry}")
+    string(REPLACE "${CMAKE_BINARY_DIR}" "<binary>" entry "${entry}")
+
+    string(APPEND key_content "arg=${entry}\n")
+  endforeach()
+
+  string(APPEND key_content "cc=${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}\n")
+  string(APPEND key_content "cxx=${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}\n")
+  string(APPEND key_content "system=${CMAKE_SYSTEM_NAME} ${host_arch} ${CMAKE_BUILD_TYPE}\n")
+
+  file(WRITE "${key_inputs}" "${key_content}")
 
   add_custom_target(
     libreoffice_pack
@@ -1681,7 +1698,9 @@ else()
       "-DASSET_BASE=${asset_base}"
       "-DSOURCE_DIR=${libreoffice_SOURCE_DIR}"
       "-DBINARY_DIR=${libreoffice_BINARY_DIR}"
-      "-DOUTPUT=${archive}"
+      "-DKEY_INPUTS=${key_inputs}"
+      "-DARCHIVE_DIR=${CMAKE_BINARY_DIR}"
+      "-DARCHIVE_TARGET=${archive_target}"
       -P "${pack}"
     DEPENDS libreoffice_relink
     VERBATIM
