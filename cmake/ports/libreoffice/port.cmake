@@ -418,6 +418,7 @@ else()
       patches/037-zip-temp-dir.patch
       patches/038-visual-studio-2026.patch
       patches/039-visual-studio-2026-crt.patch
+      patches/040-accpara-text-alias.patch
   )
 endif()
 

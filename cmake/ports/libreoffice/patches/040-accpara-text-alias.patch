@@ -1,0 +1,31 @@
+diff --git a/sw/source/core/access/accpara.hxx b/sw/source/core/access/accpara.hxx
+index 357c4f17c77d..cc5359040c82 100644
+--- a/sw/source/core/access/accpara.hxx
++++ b/sw/source/core/access/accpara.hxx
+@@ -50,6 +50,8 @@ namespace com::sun::star {
+ typedef std::unordered_map< OUString,
+                          css::beans::PropertyValue > tAccParaPropValMap;
+ 
++using SwXAccessibleText = ::com::sun::star::accessibility::XAccessibleText;
++
+ class SwAccessibleParagraph :
+         public SfxListener,
+         public SwAccessibleContext,
+@@ -234,7 +236,7 @@ public:
+     SwAccessibleParagraph( std::shared_ptr<SwAccessibleMap> const& pInitMap,
+                            const SwTextFrame& rTextFrame );
+ 
+-    inline operator css::accessibility::XAccessibleText *();
++    inline operator SwXAccessibleText *();
+ 
+     virtual bool HasCursor() override;   // required by map to remember that object
+ 
+@@ -392,7 +394,7 @@ public:
+     virtual css::uno::Sequence< css::beans::PropertyValue > SAL_CALL getRunAttributes( sal_Int32 nIndex, const css::uno::Sequence< OUString >& aRequestedAttributes ) override;
+ };
+ 
+-inline SwAccessibleParagraph::operator css::accessibility::XAccessibleText *()
++inline SwAccessibleParagraph::operator SwXAccessibleText *()
+ {
+     return static_cast< css::accessibility::XAccessibleEditableText * >( this );
+ }

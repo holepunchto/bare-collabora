@@ -173,3 +173,20 @@ Teach `configure.ac` about Visual Studio 2026: map the `2026` argument of `--wit
 ### 039 - `visual-studio-2026-crt`
 
 `find_msvc_x64_dlls` derives its default path as `Microsoft.VC${VCVER}.CRT` and only corrects it for the versions its `case` names, so Visual Studio 2026 (`VCVER` of `18.0`) keeps a path that does not exist and configure fails with `missing msvcp140.dll`. Add an arm resolving the 2026 redist directory, `redist/MSVC/<version>/x64/Microsoft.VC145.CRT`. Unlike 038 this is not a backport: master deletes the check outright rather than teaching it new versions, and the variables it feeds are consumed by the installer packaging, so removing it is not a small lift on this branch. `with_redist` is left empty for `VC145.CRT`, which is harmless here - the port configures `--without-package-format`, and the only consumer is the `msi` branch.
+
+### 040 - `accpara-text-alias`
+
+Name `SwAccessibleParagraph`'s conversion target through an alias declared at namespace scope. The class derives from nine UNO interfaces, several of which derive from `XAccessibleText`, so the conversion exists to name one path through the hierarchy. Visual Studio 2026 rejects every direct spelling of it:
+
+| Spelling                                            | MSVC 19.51                                                                                               |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| declared in class, defined out of line (as shipped) | `error C2738: ... is ambiguous or is not a member`                                                       |
+| defined in the class body                           | `error C2440: cannot convert ... to 'SwAccessibleParagraph::XAccessibleEditableText::XAccessibleText *'` |
+| either form qualified from global scope             | same two errors                                                                                          |
+| **via a namespace-scope alias**                     | **compiles**                                                                                             |
+
+The `C2440` target type is the tell: the compiler resolves the conversion type through class scope, landing on a base's injected name rather than the namespace type. An alias whose name does not exist in class scope forces lookup out to namespace scope, which is why it is the only spelling that survives.
+
+Upstream solved this differently, by moving the class onto `cppu::ImplInheritanceHelper` so the hierarchy is linear and no conversion is needed (`distro/collabora/co-26.04` and master). That is an inheritance refactor rather than a patch, so it does not lift across to this branch.
+
+Verified against MSVC 19.51.36256 on a Windows ARM64 host, with a reduced reproduction of the class shape rather than a full build.
