@@ -1660,6 +1660,32 @@ else()
   )
 
   add_custom_target(libreoffice_relink DEPENDS "${stamp}" ${byproducts})
+
+  # Reusing a build means packing what a consumer reads, which is the list relink
+  # already works from plus the headers and assets.
+  set(pack "${CMAKE_CURRENT_LIST_DIR}/pack.cmake")
+
+  # host_platform and host_arch are LibreOffice's triple components; the archive
+  # is named for the target the rest of the project uses.
+  bare_target(archive_target)
+
+  set(archive "${CMAKE_BINARY_DIR}/libreoffice-${archive_target}.tar.xz")
+
+  add_custom_target(
+    libreoffice_pack
+    COMMAND
+      "${CMAKE_COMMAND}"
+      "-DLIBRARIES=${relink_args}"
+      "-DLIBRARY_BASE=${library_base}"
+      "-DASSETS=${assets}"
+      "-DASSET_BASE=${asset_base}"
+      "-DSOURCE_DIR=${libreoffice_SOURCE_DIR}"
+      "-DBINARY_DIR=${libreoffice_BINARY_DIR}"
+      "-DOUTPUT=${archive}"
+      -P "${pack}"
+    DEPENDS libreoffice_relink
+    VERBATIM
+  )
 endif()
 
 add_dependencies(libreoffice libreoffice_relink)
