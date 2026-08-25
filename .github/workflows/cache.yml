@@ -1,10 +1,5 @@
 name: Cache
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - cmake/ports/libreoffice/**
   workflow_dispatch:
 permissions:
   contents: write
@@ -93,7 +88,7 @@ jobs:
           arch: ${{ matrix.arch }}
           flags: ${{ matrix.flags }}
           tags: ${{ matrix.tags }}
-      - run: npx bare-make build --target libreoffice_pack
+      - run: bare-make build --target libreoffice_pack
       - run: gh release upload "$TAG" build/libreoffice-*.tar.xz --clobber
         shell: bash
         env:
