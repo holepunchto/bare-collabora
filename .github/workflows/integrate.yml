@@ -8,6 +8,8 @@ on:
       - main
 permissions:
   contents: read
+env:
+  CACHE_URL: https://github.com/${{ github.repository }}/releases/download/libreoffice-cache
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -56,6 +58,6 @@ jobs:
         with:
           platform: ${{ matrix.platform }}
           arch: ${{ matrix.arch }}
-          flags: ${{ matrix.flags }}
+          flags: -D LIBREOFFICE_CACHE=${{ env.CACHE_URL }} ${{ matrix.flags }}
           prefix: npm/${{ matrix.platform }}-${{ matrix.arch }}/prebuilds
       - run: npm test
