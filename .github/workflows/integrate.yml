@@ -31,9 +31,10 @@ jobs:
           - os: windows-2022
             platform: win32
             arch: x64
-          - os: windows-11-arm
+          - os: windows-11-vs2026-arm
             platform: win32
             arch: arm64
+            flags: -D LIBREOFFICE_VISUAL_STUDIO=2026
     runs-on: ${{ matrix.os }}
     name: Test / ${{ matrix.platform }}-${{ matrix.arch }}
     steps:
@@ -55,5 +56,6 @@ jobs:
         with:
           platform: ${{ matrix.platform }}
           arch: ${{ matrix.arch }}
+          flags: ${{ matrix.flags }}
           prefix: npm/${{ matrix.platform }}-${{ matrix.arch }}/prebuilds
       - run: npm test
