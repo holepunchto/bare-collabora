@@ -353,6 +353,42 @@ if(WIN32)
   list(APPEND env MSYSTEM=MSYS2)
 endif()
 
+# What the key needs that only configure knows. Paths become placeholders so the
+# key does not depend on where the checkout lives.
+set(key_inputs "${CMAKE_BINARY_DIR}/_libreoffice/key.args")
+
+set(key_content "")
+
+foreach(entry IN LISTS args env)
+  string(REPLACE "${CMAKE_SOURCE_DIR}" "<source>" entry "${entry}")
+  string(REPLACE "${CMAKE_BINARY_DIR}" "<binary>" entry "${entry}")
+
+  string(APPEND key_content "arg=${entry}\n")
+endforeach()
+
+string(APPEND key_content "cc=${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}\n")
+string(APPEND key_content "cxx=${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}\n")
+string(APPEND key_content "system=${CMAKE_SYSTEM_NAME} ${host_arch} ${CMAKE_BUILD_TYPE}\n")
+
+file(WRITE "${key_inputs}" "${key_content}")
+
+bare_target(archive_target)
+
+# An archive of this exact build may already exist. Opt in with LIBREOFFICE_CACHE,
+# since looking costs a request and a download.
+if(NOT LIBREOFFICE_PREBUILT AND LIBREOFFICE_CACHE)
+  include("${CMAKE_CURRENT_LIST_DIR}/fetch.cmake")
+
+  libreoffice_fetch_prebuilt(
+    "${LIBREOFFICE_CACHE}"
+    "distro/collabora/co-25.04"
+    "${CMAKE_CURRENT_LIST_DIR}"
+    "${key_inputs}"
+    "${archive_target}"
+    LIBREOFFICE_PREBUILT
+  )
+endif()
+
 if(LIBREOFFICE_PREBUILT)
   # A prebuilt archive mirrors the two trees a source build leaves behind, so
   # everything below reads it unchanged. Its libraries are already relinked.
@@ -1665,28 +1701,6 @@ else()
   # already works from plus the headers and assets.
   set(pack "${CMAKE_CURRENT_LIST_DIR}/pack.cmake")
 
-  # host_platform and host_arch are LibreOffice's triple components; the archive
-  # is named for the target the rest of the project uses.
-  bare_target(archive_target)
-
-  # What the key needs that only configure knows. Paths are relative to
-  # placeholders so the key does not depend on where the checkout lives.
-  set(key_inputs "${libreoffice_STAMP_DIR}/${libreoffice}-key.args")
-
-  set(key_content "")
-
-  foreach(entry IN LISTS args env)
-    string(REPLACE "${CMAKE_SOURCE_DIR}" "<source>" entry "${entry}")
-    string(REPLACE "${CMAKE_BINARY_DIR}" "<binary>" entry "${entry}")
-
-    string(APPEND key_content "arg=${entry}\n")
-  endforeach()
-
-  string(APPEND key_content "cc=${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}\n")
-  string(APPEND key_content "cxx=${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}\n")
-  string(APPEND key_content "system=${CMAKE_SYSTEM_NAME} ${host_arch} ${CMAKE_BUILD_TYPE}\n")
-
-  file(WRITE "${key_inputs}" "${key_content}")
 
   add_custom_target(
     libreoffice_pack

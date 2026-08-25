@@ -7,10 +7,8 @@
 # invalidate every archive whenever the file is edited for reasons that leave the
 # output identical.
 
+# Reads the revision from a checked-out tree, which is what packing has to hand.
 function(libreoffice_cache_key source_dir port_dir key_inputs out)
-  set(parts "")
-
-  # The revision actually checked out, rather than the ref that was asked for.
   execute_process(
     COMMAND git -C "${source_dir}" rev-parse HEAD
     OUTPUT_VARIABLE revision
@@ -21,6 +19,15 @@ function(libreoffice_cache_key source_dir port_dir key_inputs out)
   if(NOT result EQUAL 0)
     message(FATAL_ERROR "Cannot read the revision of ${source_dir}")
   endif()
+
+  libreoffice_cache_key_from("${revision}" "${port_dir}" "${key_inputs}" key)
+
+  set(${out} "${key}" PARENT_SCOPE)
+endfunction()
+
+# Takes the revision, which is all configure time can know before fetching.
+function(libreoffice_cache_key_from revision port_dir key_inputs out)
+  set(parts "")
 
   string(APPEND parts "revision=${revision}\n")
 
