@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Release
     steps:
-      - run: gh release view "$TAG" || gh release create "$TAG" --title "LibreOffice build cache" --notes "Built LibreOffice, named by what went into it. Read by cmake/ports/libreoffice when LIBREOFFICE_CACHE is set."
+      - run: gh release view "$TAG" || gh release create "$TAG" --prerelease --title "LibreOffice build cache" --notes "Built LibreOffice, named by what went into it. Read by cmake/ports/libreoffice when LIBREOFFICE_CACHE is set."
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
