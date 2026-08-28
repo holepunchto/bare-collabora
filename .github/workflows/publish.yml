@@ -4,8 +4,7 @@ on:
     tags:
       - v*
 permissions:
-  id-token: write
-  contents: write
+  contents: read
 jobs:
   prebuild:
     strategy:
@@ -91,6 +90,9 @@ jobs:
           prefix: install
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
     environment:
       name: npm
     needs: prebuild
