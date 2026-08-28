@@ -2,10 +2,12 @@ name: Cache
 on:
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     name: Release
     steps:
       - run: gh release view "$TAG" || gh release create "$TAG" --prerelease --title "LibreOffice build cache" --notes "Built LibreOffice, named by what went into it. Read by cmake/ports/libreoffice when LIBREOFFICE_CACHE is set."
@@ -90,8 +92,23 @@ jobs:
           flags: ${{ matrix.flags }}
           tags: ${{ matrix.tags }}
       - run: bare-make build --target libreoffice_pack
-      - run: gh release upload "$TAG" build/libreoffice-*.tar.xz --clobber
-        shell: bash
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: libreoffice-${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.tags }}
+          path: build/libreoffice-*.tar.xz
+  upload:
+    runs-on: ubuntu-latest
+    needs: pack
+    permissions:
+      contents: write
+    name: Upload
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          pattern: libreoffice-*
+          path: archives
+          merge-multiple: true
+      - run: gh release upload "$TAG" archives/*.tar.xz --clobber
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
