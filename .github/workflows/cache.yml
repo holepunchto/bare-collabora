@@ -96,3 +96,42 @@ jobs:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
           TAG: libreoffice-cache
+  prune:
+    runs-on: ubuntu-latest
+    needs: pack
+    name: Prune
+    steps:
+      - run: |
+          cat > prune.py <<'EOF'
+          import re, sys
+          from collections import defaultdict
+
+          # Every target keys its own archive, so the newest per target is what a
+          # build asks for. One older key survives so a branch that has not
+          # rebased yet keeps hitting.
+          keep = 2
+          seen = defaultdict(list)
+
+          for line in sys.stdin:
+              name, created = line.rstrip("\n").split("\t")
+              match = re.fullmatch(r"libreoffice-(.+)-([0-9a-f]{16})\.tar\.xz", name)
+              if match:
+                  seen[match.group(1)].append((created, name))
+
+          for archives in seen.values():
+              for _, name in sorted(archives, reverse=True)[keep:]:
+                  print(name)
+          EOF
+
+          gh release view "$TAG" --json assets --jq '.assets[] | [.name, .createdAt] | @tsv' > assets.tsv
+
+          python3 prune.py < assets.tsv > stale.txt
+
+          while read -r name; do
+            echo "removing $name"
+            gh release delete-asset "$TAG" "$name" --yes
+          done < stale.txt
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          TAG: libreoffice-cache
