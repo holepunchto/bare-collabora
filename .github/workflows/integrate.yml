@@ -24,10 +24,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             platform: linux
             arch: x64
-          - os: macos-latest
+          - os: macos-14
             platform: darwin
             arch: arm64
           - os: windows-2022
