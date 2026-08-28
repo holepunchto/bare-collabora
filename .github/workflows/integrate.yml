@@ -14,6 +14,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  security:
+    runs-on: ubuntu-latest
+    name: Security
+    steps:
+      - uses: holepunchto/actions/security-base@v1
   lint:
     runs-on: ubuntu-latest
     name: Lint
