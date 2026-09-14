@@ -13,5 +13,15 @@ export default interface CollaboraDocument {
 }
 
 export default class CollaboraDocument {
-  constructor(url: string)
+  /**
+   * Opens the document at `url`. `options` is a comma-separated string of filter options
+   * forwarded to Collabora for the import filter; formats whose import filter would otherwise
+   * ask how to read the file need them, such as the separator, text delimiter and character set
+   * of a CSV file.
+   * @param url - The path or `file:` URL of the document to open.
+   * @param options - A comma-separated string of filter options forwarded to Collabora. See the
+   * Collabora documentation for the filters available for a given format.
+   * @throws The document cannot be opened.
+   */
+  constructor(url: string, options?: string)
 }
