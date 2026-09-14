@@ -36,6 +36,10 @@ Extend the `CONF-FOR-BUILD` opt-out from system `libxml`, `fontconfig`, `freetyp
 
 Extend the per-application suffix tables LibreOfficeKit's `saveAs` consults in `desktop/source/lib/init.cxx`. LibreOfficeKit picks the export filter purely from the target suffix and a fixed table per document type, and there is no way to name a filter directly, so a suffix missing from the table fails with `no output filter found for provided suffix` even though the filter exists. Adds `jpg` / `jpeg` for Writer, Calc, Impress and Draw (`*_jpg_Export`, which ship alongside the `png` filters already listed) and `txt` for Calc, mapped to the same `Text - txt - csv (StarCalc)` filter as `csv` - LibreOffice's only plain-text export for spreadsheets. Impress and Draw have no plain-text or Markdown filter at all, so nothing is added there.
 
+### 042 - `lok-explicit-filter-options`
+
+Let filter options given to `documentLoadWithOptions()` answer the import filter's question instead of asking it. `SfxObjectShell::HandleFilter` raises a `FilterOptionsRequest` when a filter has a dialog (`UIComponent`) and nothing has answered it yet; LibreOfficeKit always puts a `FilterOptions` item in the media descriptor, so upstream asks whenever `LibreOfficeKit::isActive()` to keep the dialog reachable for Collabora Online. LibreOfficeKit's interaction handler then forwards the request to the generic UI handler, which posts a dialog to the VCL main loop - one an embedder that never runs that loop can never answer, so opening a CSV blocked forever. Ask only when the item is empty: an embedder that passes options (or `DETECT` instructions for `DetectFilterOptions`) proceeds without a dialog, one that passes nothing gets the same dialog as before. Non-LibreOfficeKit behaviour is unchanged.
+
 ## iOS
 
 ### 004 - `allow-ios-simulator`

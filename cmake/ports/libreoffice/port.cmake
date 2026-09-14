@@ -456,6 +456,7 @@ else()
       patches/039-visual-studio-2026-crt.patch
       patches/040-accpara-text-alias.patch
       patches/041-lok-jpg-and-calc-txt.patch
+      patches/042-lok-explicit-filter-options.patch
   )
 endif()
 
