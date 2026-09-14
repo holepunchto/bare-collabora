@@ -61,3 +61,23 @@ test('presentation to pdf', async (t) => {
 
   t.pass()
 })
+
+test('drawing to jpg', async (t) => {
+  const tmp = await t.tmp()
+
+  const drawing = new Document(require.asset('./test/fixtures/sample.fodg'))
+
+  drawing.saveAs(path.join(tmp, 'sample.jpg'))
+
+  t.pass()
+})
+
+test('spreadsheet to txt', async (t) => {
+  const tmp = await t.tmp()
+
+  const spreadsheet = new Document(require.asset('./test/fixtures/sample.fods'))
+
+  spreadsheet.saveAs(path.join(tmp, 'sample.txt'))
+
+  t.pass()
+})
