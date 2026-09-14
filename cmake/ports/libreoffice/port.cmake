@@ -168,7 +168,6 @@ if(APPLE)
       --with-system-zlib
 
       --disable-community-flavor
-      --disable-database-connectivity
       --disable-dbus
       --disable-epm
       --disable-evolution2
