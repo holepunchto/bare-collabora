@@ -81,3 +81,13 @@ test('spreadsheet to txt', async (t) => {
 
   t.pass()
 })
+
+test('csv to pdf', async (t) => {
+  const tmp = await t.tmp()
+
+  const csv = new Document(require.asset('./test/fixtures/sample.csv'), '44,34,76')
+
+  csv.saveAs(path.join(tmp, 'sample.pdf'))
+
+  t.pass()
+})
