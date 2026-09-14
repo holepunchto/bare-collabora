@@ -21,6 +21,12 @@ for (const library of libraries) {
 
         dependency.name = '@rpath/' + path.basename(name)
       }
+
+      const rpath = binary.getLoadCommand(MachO.LoadCommand.TYPE.RPATH)
+
+      if (rpath === null || rpath.path !== '@loader_path') {
+        binary.addLoadCommand(new MachO.RPathCommand('@loader_path'))
+      }
     }
 
     fat.toDisk(library)
