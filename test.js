@@ -11,3 +11,33 @@ test('markdown to pdf', async (t) => {
 
   t.pass()
 })
+
+test('drawing to pdf', async (t) => {
+  const tmp = await t.tmp()
+
+  const drawing = new Document(require.asset('./test/fixtures/sample.fodg'))
+
+  drawing.saveAs(path.join(tmp, 'sample.pdf'))
+
+  t.pass()
+})
+
+test('drawing to png', async (t) => {
+  const tmp = await t.tmp()
+
+  const drawing = new Document(require.asset('./test/fixtures/sample.fodg'))
+
+  drawing.saveAs(path.join(tmp, 'sample.png'))
+
+  t.pass()
+})
+
+test('drawing to svg', async (t) => {
+  const tmp = await t.tmp()
+
+  const drawing = new Document(require.asset('./test/fixtures/sample.fodg'))
+
+  drawing.saveAs(path.join(tmp, 'sample.svg'))
+
+  t.pass()
+})
