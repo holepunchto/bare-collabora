@@ -32,6 +32,10 @@ Build `ExternalPackage_fontconfig_data` on Android, iOS, and Linux too - not jus
 
 Extend the `CONF-FOR-BUILD` opt-out from system `libxml`, `fontconfig`, `freetype`, and `zlib` to also fire when `_os` is `Android` or `iOS`, not just `Emscripten`. The build-side configure was probing the host's `pkg-config` for `fontconfig >= 2.12.0` (and the others) even when the actual target was a self-contained cross-build that ships these libs internally; on a clean Ubuntu runner without `libfontconfig-dev` the probe fails. The `--with-main-module` defaulting stays Emscripten-only.
 
+### 041 - `lok-jpg-and-calc-txt`
+
+Extend the per-application suffix tables LibreOfficeKit's `saveAs` consults in `desktop/source/lib/init.cxx`. LibreOfficeKit picks the export filter purely from the target suffix and a fixed table per document type, and there is no way to name a filter directly, so a suffix missing from the table fails with `no output filter found for provided suffix` even though the filter exists. Adds `jpg` / `jpeg` for Writer, Calc, Impress and Draw (`*_jpg_Export`, which ship alongside the `png` filters already listed) and `txt` for Calc, mapped to the same `Text - txt - csv (StarCalc)` filter as `csv` - LibreOffice's only plain-text export for spreadsheets. Impress and Draw have no plain-text or Markdown filter at all, so nothing is added there.
+
 ## iOS
 
 ### 004 - `allow-ios-simulator`
