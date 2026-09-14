@@ -81,6 +81,11 @@ install(
     REGEX "/types/"
     REGEX "/ure/"
 
+    # Draw and Impress read their default styles, layouts and transitions from
+    # here when a document is created, so without these no drawing or
+    # presentation loads at all.
+    REGEX "/soffice.cfg/simpress/"
+
     # UI
     PATTERN "*.ui"
 
