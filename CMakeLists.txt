@@ -80,6 +80,7 @@ install(
     REGEX "/services/"
     REGEX "/types/"
     REGEX "/ure/"
+    REGEX "/soffice.cfg/simpress/"
 
     # UI
     PATTERN "*.ui"
