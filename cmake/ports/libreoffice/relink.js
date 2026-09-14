@@ -21,6 +21,15 @@ for (const library of libraries) {
 
         dependency.name = '@rpath/' + path.basename(name)
       }
+
+      // A library UNO opens by name at runtime is its own root for @rpath, so
+      // it only finds the siblings something else has already loaded unless it
+      // says where they are: next to it.
+      const rpath = binary.getLoadCommand(MachO.LoadCommand.TYPE.RPATH)
+
+      if (rpath === null || rpath.path !== '@loader_path') {
+        binary.addLoadCommand(new MachO.RPathCommand('@loader_path'))
+      }
     }
 
     fat.toDisk(library)
