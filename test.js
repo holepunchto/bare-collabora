@@ -12,6 +12,16 @@ test('markdown to pdf', async (t) => {
   t.pass()
 })
 
+test('markdown to html', async (t) => {
+  const tmp = await t.tmp()
+
+  const markdown = new Document(require.asset('./test/fixtures/sample.md'))
+
+  markdown.saveAs(path.join(tmp, 'sample.html'))
+
+  t.pass()
+})
+
 test('drawing to pdf', async (t) => {
   const tmp = await t.tmp()
 
