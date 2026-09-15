@@ -41,3 +41,23 @@ test('drawing to svg', async (t) => {
 
   t.pass()
 })
+
+test('spreadsheet to pdf', async (t) => {
+  const tmp = await t.tmp()
+
+  const spreadsheet = new Document(require.asset('./test/fixtures/sample.fods'))
+
+  spreadsheet.saveAs(path.join(tmp, 'sample.pdf'))
+
+  t.pass()
+})
+
+test('presentation to pdf', async (t) => {
+  const tmp = await t.tmp()
+
+  const presentation = new Document(require.asset('./test/fixtures/sample.fodp'))
+
+  presentation.saveAs(path.join(tmp, 'sample.pdf'))
+
+  t.pass()
+})
