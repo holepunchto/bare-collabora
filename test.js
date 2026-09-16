@@ -11,3 +11,93 @@ test('markdown to pdf', async (t) => {
 
   t.pass()
 })
+
+test('markdown to html', async (t) => {
+  const tmp = await t.tmp()
+
+  const markdown = new Document(require.asset('./test/fixtures/sample.md'))
+
+  markdown.saveAs(path.join(tmp, 'sample.html'))
+
+  t.pass()
+})
+
+test('drawing to pdf', async (t) => {
+  const tmp = await t.tmp()
+
+  const drawing = new Document(require.asset('./test/fixtures/sample.fodg'))
+
+  drawing.saveAs(path.join(tmp, 'sample.pdf'))
+
+  t.pass()
+})
+
+test('drawing to png', async (t) => {
+  const tmp = await t.tmp()
+
+  const drawing = new Document(require.asset('./test/fixtures/sample.fodg'))
+
+  drawing.saveAs(path.join(tmp, 'sample.png'))
+
+  t.pass()
+})
+
+test('drawing to svg', async (t) => {
+  const tmp = await t.tmp()
+
+  const drawing = new Document(require.asset('./test/fixtures/sample.fodg'))
+
+  drawing.saveAs(path.join(tmp, 'sample.svg'))
+
+  t.pass()
+})
+
+test('spreadsheet to pdf', async (t) => {
+  const tmp = await t.tmp()
+
+  const spreadsheet = new Document(require.asset('./test/fixtures/sample.fods'))
+
+  spreadsheet.saveAs(path.join(tmp, 'sample.pdf'))
+
+  t.pass()
+})
+
+test('presentation to pdf', async (t) => {
+  const tmp = await t.tmp()
+
+  const presentation = new Document(require.asset('./test/fixtures/sample.fodp'))
+
+  presentation.saveAs(path.join(tmp, 'sample.pdf'))
+
+  t.pass()
+})
+
+test('drawing to jpg', async (t) => {
+  const tmp = await t.tmp()
+
+  const drawing = new Document(require.asset('./test/fixtures/sample.fodg'))
+
+  drawing.saveAs(path.join(tmp, 'sample.jpg'))
+
+  t.pass()
+})
+
+test('spreadsheet to txt', async (t) => {
+  const tmp = await t.tmp()
+
+  const spreadsheet = new Document(require.asset('./test/fixtures/sample.fods'))
+
+  spreadsheet.saveAs(path.join(tmp, 'sample.txt'))
+
+  t.pass()
+})
+
+test('csv to pdf', async (t) => {
+  const tmp = await t.tmp()
+
+  const csv = new Document(require.asset('./test/fixtures/sample.csv'), '44,34,76')
+
+  csv.saveAs(path.join(tmp, 'sample.pdf'))
+
+  t.pass()
+})

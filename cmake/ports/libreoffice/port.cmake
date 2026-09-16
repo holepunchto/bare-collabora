@@ -168,7 +168,6 @@ if(APPLE)
       --with-system-zlib
 
       --disable-community-flavor
-      --disable-database-connectivity
       --disable-dbus
       --disable-epm
       --disable-evolution2
@@ -455,6 +454,8 @@ else()
       patches/038-visual-studio-2026.patch
       patches/039-visual-studio-2026-crt.patch
       patches/040-accpara-text-alias.patch
+      patches/041-lok-jpg-and-calc-txt.patch
+      patches/042-lok-explicit-filter-options.patch
   )
 endif()
 

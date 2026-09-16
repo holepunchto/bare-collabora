@@ -1,0 +1,12 @@
+diff --git a/sfx2/source/doc/objstor.cxx b/sfx2/source/doc/objstor.cxx
+--- a/sfx2/source/doc/objstor.cxx
++++ b/sfx2/source/doc/objstor.cxx
+@@ -1201,7 +1201,7 @@
+     // interactive state). For now this is focused on CSV files.
+     DetectFilterOptions(pMedium);
+ 
+-    if ( !pData && (bTiledRendering || !pOptions) )
++    if ( !pData && (!pOptions || (bTiledRendering && pOptions->GetValue().isEmpty())) )
+     {
+         css::uno::Reference< XMultiServiceFactory > xServiceManager = ::comphelper::getProcessServiceFactory();
+         css::uno::Reference< XNameAccess > xFilterCFG;

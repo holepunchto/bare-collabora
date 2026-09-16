@@ -77,13 +77,17 @@ static js_external_t<bare_collabora_document_t>
 bare_collabora_document_open(
   js_env_t *env,
   js_receiver_t,
-  std::string url
+  std::string url,
+  std::optional<std::string> options
 ) {
   int err;
 
   uv_mutex_lock(&bare_collabora__lock);
 
-  auto handle = bare_collabora__kit->documentLoad(url.c_str());
+  auto handle = bare_collabora__kit->documentLoad(
+    url.c_str(),
+    options.has_value() ? options->c_str() : nullptr
+  );
 
   if (!handle) {
     auto message = bare_collabora__kit->getError();

@@ -1,0 +1,47 @@
+diff --git a/desktop/source/lib/init.cxx b/desktop/source/lib/init.cxx
+--- a/desktop/source/lib/init.cxx
++++ b/desktop/source/lib/init.cxx
+@@ -344,6 +344,8 @@
+     { "txt",   u"Text"_ustr },
+     { "xhtml", u"XHTML Writer File"_ustr },
+     { "png",   u"writer_png_Export"_ustr },
++    { "jpg",   u"writer_jpg_Export"_ustr },
++    { "jpeg",  u"writer_jpg_Export"_ustr },
+     { "xml",   u"writer_indexing_export"_ustr },
+     { "md",    u"Markdown"_ustr },
+ };
+@@ -351,6 +353,7 @@
+ constexpr ExtensionMap aCalcExtensionMap[] =
+ {
+     { "csv",   u"Text - txt - csv (StarCalc)"_ustr },
++    { "txt",   u"Text - txt - csv (StarCalc)"_ustr },
+     { "fods",  u"OpenDocument Spreadsheet Flat XML"_ustr },
+     { "html",  u"HTML (StarCalc)"_ustr },
+     { "ods",   u"calc8"_ustr },
+@@ -361,6 +364,8 @@
+     { "xlsm",  u"Calc MS Excel 2007 VBA XML"_ustr },
+     { "xlsx",  u"Calc MS Excel 2007 XML"_ustr },
+     { "png",   u"calc_png_Export"_ustr },
++    { "jpg",   u"calc_jpg_Export"_ustr },
++    { "jpeg",  u"calc_jpg_Export"_ustr },
+ };
+ 
+ constexpr ExtensionMap aImpressExtensionMap[] =
+@@ -382,6 +387,8 @@
+     { "svg",   u"impress_svg_Export"_ustr },
+     { "xhtml", u"XHTML Impress File"_ustr },
+     { "png",   u"impress_png_Export"_ustr },
++    { "jpg",   u"impress_jpg_Export"_ustr },
++    { "jpeg",  u"impress_jpg_Export"_ustr },
+     { "swf",   u"impress_flash_Export"_ustr },
+     { "bmp",   u"impress_bmp_Export"_ustr },
+     { "gif",   u"impress_gif_Export"_ustr },
+@@ -398,6 +405,8 @@
+     { "svg",   u"draw_svg_Export"_ustr },
+     { "xhtml", u"XHTML Draw File"_ustr },
+     { "png",   u"draw_png_Export"_ustr },
++    { "jpg",   u"draw_jpg_Export"_ustr },
++    { "jpeg",  u"draw_jpg_Export"_ustr },
+ };
+ 
+ OUString getUString(const char* pString)
