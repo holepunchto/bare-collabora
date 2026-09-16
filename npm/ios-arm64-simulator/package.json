@@ -1,6 +1,6 @@
 {
   "name": "bare-collabora-ios-arm64-simulator",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "The iOS ARM simulator 64-bit prebuilds for Collabora",
   "exports": {
     "./package": "./package.json",
