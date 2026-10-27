@@ -67,8 +67,10 @@ static void
 bare_collabora__on_document_finalize(js_env_t *env, bare_collabora_document_t *wrapper) {
   int err;
 
-  err = js_remove_teardown_callback<bare_collabora__on_document_teardown>(env, wrapper);
-  assert(err == 0);
+  if (wrapper->handle) {
+    err = js_remove_teardown_callback<bare_collabora__on_document_teardown>(env, wrapper);
+    assert(err == 0);
+  }
 
   delete wrapper;
 }
